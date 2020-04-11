@@ -1,12 +1,14 @@
 package IntelligentLightSystemApplication;
 
+import IntelligentLightSystemApplication.DragAndDrop.DropMenu;
+import IntelligentLightSystemApplication.DragAndDrop.ModeMenu;
 import IntelligentLightSystemApplication.DragAndDrop.Room;
-import IntelligentLightSystemApplication.DragAndDrop.SensorDrop;
 import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
 import IntelligentLightSystemApplication.Menu.MainMenu;
 import IntelligentLightSystemApplication.SensorList.SensorList;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.IOException;
 
@@ -14,12 +16,12 @@ public class MainFrame extends JFrame {
     MainFrame(){
         // setting Main Frame attributes
         setTitle("Intelligent Light System Application");
-        setPreferredSize(new Dimension(1500+60, 800+60));
+        setPreferredSize(new Dimension(1500+100, 800+80)); //25px - menu, 3*10px spaces betweeen components
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         setVisible(true);
-        setLayout(new BorderLayout(5,5));
+        setLayout(new BorderLayout(10,10));
 
         //Menu
         MainMenu menu=new MainMenu();
@@ -27,8 +29,9 @@ public class MainFrame extends JFrame {
 
         //Lists panel
         JPanel lists=new JPanel();
-        lists.setLayout(new BorderLayout(5,5));
+        lists.setLayout(new BorderLayout(10,10));
         lists.setPreferredSize(new Dimension(500, 800));
+        lists.setBorder(new EmptyBorder(0,0,10,10));
 
         //Sensor List
         SensorList sensorList=new SensorList();
@@ -48,9 +51,12 @@ public class MainFrame extends JFrame {
 
         //DragDrop and Mode panel
         JPanel dragAndDropPanel=new JPanel();
-        dragAndDropPanel.setLayout(new BorderLayout(5,5));
+        dragAndDropPanel.setLayout(new BorderLayout(10,10));
         dragAndDropPanel.setPreferredSize(new Dimension(1000, 800));
-        dragAndDropPanel.add(new SensorDrop(),BorderLayout.NORTH);
+        dragAndDropPanel.setBorder(new EmptyBorder(0,10,10,0));
+
+        dragAndDropPanel.add(new DropMenu(),BorderLayout.WEST);
+        dragAndDropPanel.add(new ModeMenu(), BorderLayout.EAST);
         dragAndDropPanel.add(new Room(),BorderLayout.SOUTH);
 
         add(dragAndDropPanel,BorderLayout.WEST);
