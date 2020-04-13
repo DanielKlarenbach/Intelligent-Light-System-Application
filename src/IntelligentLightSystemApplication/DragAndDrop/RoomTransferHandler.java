@@ -30,7 +30,7 @@ public class RoomTransferHandler extends TransferHandler {
         String[] values = data.split(";");
 
         Sensor sensor=new Sensor(Double.parseDouble(values[0]),Double.parseDouble(values[1]),Double.parseDouble(values[2]));
-        sensor.setBounds(20,20,info.getDropLocation().getDropPoint().x,info.getDropLocation().getDropPoint().y);
+        sensor.setBounds(info.getDropLocation().getDropPoint().x,info.getDropLocation().getDropPoint().y,20,20);
         room.add(sensor);
         room.revalidate();
 
