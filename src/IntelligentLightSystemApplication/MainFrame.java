@@ -1,7 +1,7 @@
 package IntelligentLightSystemApplication;
 
 import IntelligentLightSystemApplication.DragAndDrop.DropMenu;
-import IntelligentLightSystemApplication.DragAndDrop.ModeMenu;
+import IntelligentLightSystemApplication.ModeMenu.ModeMenu;
 import IntelligentLightSystemApplication.DragAndDrop.Room;
 import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
 import IntelligentLightSystemApplication.Menu.MainMenu;

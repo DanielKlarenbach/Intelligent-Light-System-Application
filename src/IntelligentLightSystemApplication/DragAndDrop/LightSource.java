@@ -4,21 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 
-public class Sensor extends JLabel implements DragGestureListener, DragSourceListener {
+public class LightSource extends JLabel implements DragGestureListener, DragSourceListener{
     private double x;
     private double y;
     private double z;
 
-
-    public Sensor(double x, double y,double z){
+    public LightSource(double x, double y,double z){
         // Sensor's image configuration
-        super(new ImageIcon("src/resources/sensor.png"));
+        super(new ImageIcon("src/resources/lightSource.png"));
         setHorizontalTextPosition(JLabel.CENTER);
         setVerticalTextPosition(JLabel.BOTTOM);
-        setText("sensor");
+        setText("light source");
         setPreferredSize(new Dimension(100,100));
 
         // Sensor's coordinates in the room
@@ -73,4 +70,3 @@ public class Sensor extends JLabel implements DragGestureListener, DragSourceLis
 
     }
 }
-

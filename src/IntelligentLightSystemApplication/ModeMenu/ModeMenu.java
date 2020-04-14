@@ -1,4 +1,4 @@
-package IntelligentLightSystemApplication.DragAndDrop;
+package IntelligentLightSystemApplication.ModeMenu;
 
 import javax.swing.*;
 import java.awt.*;
