@@ -23,8 +23,21 @@ public class MainFrame extends JFrame {
         setVisible(true);
         setLayout(new BorderLayout(10,10));
 
+        //DragDrop and Mode panel
+        JPanel dragAndDropPanel=new JPanel();
+        dragAndDropPanel.setLayout(new BorderLayout(10,10));
+        dragAndDropPanel.setPreferredSize(new Dimension(1000, 800));
+        dragAndDropPanel.setBorder(new EmptyBorder(0,10,10,0));
+
+        Room room=new Room();
+        dragAndDropPanel.add(new DropMenu(),BorderLayout.WEST);
+        dragAndDropPanel.add(new ModeMenu(), BorderLayout.EAST);
+        dragAndDropPanel.add(room,BorderLayout.SOUTH);
+
+        add(dragAndDropPanel,BorderLayout.WEST);
+
         //Menu
-        MainMenu menu=new MainMenu();
+        MainMenu menu=new MainMenu(room);
         add(menu,BorderLayout.NORTH);
 
         //Lists panel
@@ -48,18 +61,6 @@ public class MainFrame extends JFrame {
         lists.add(lightSourceList,BorderLayout.SOUTH);
 
         add(lists,BorderLayout.EAST);
-
-        //DragDrop and Mode panel
-        JPanel dragAndDropPanel=new JPanel();
-        dragAndDropPanel.setLayout(new BorderLayout(10,10));
-        dragAndDropPanel.setPreferredSize(new Dimension(1000, 800));
-        dragAndDropPanel.setBorder(new EmptyBorder(0,10,10,0));
-
-        dragAndDropPanel.add(new DropMenu(),BorderLayout.WEST);
-        dragAndDropPanel.add(new ModeMenu(), BorderLayout.EAST);
-        dragAndDropPanel.add(new Room(),BorderLayout.SOUTH);
-
-        add(dragAndDropPanel,BorderLayout.WEST);
 
         pack();
     }
