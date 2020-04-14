@@ -5,15 +5,15 @@ import java.awt.*;
 
 public class DropMenu extends JPanel {
     public DropMenu(){
-        //DropMenu panel configuration
+        // DropMenu panel configuration
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(800,200));
+        setPreferredSize(new Dimension(800,120));
         setBorder(BorderFactory.createLineBorder(Color.black));
 
-        // Label
+        // label
         add(new Label("Drag and drop objects to add them into your project"),BorderLayout.NORTH);
 
-        // Drop icons
+        // drop icons
         JPanel iconPanel=new JPanel();
         iconPanel.setLayout(new FlowLayout(FlowLayout.CENTER,50,0));
 
@@ -23,8 +23,8 @@ public class DropMenu extends JPanel {
         LightSource lightSource=new LightSource(10,10,10);
         iconPanel.add(lightSource);
 
-        OutsideLightSource outsideLightSource=new OutsideLightSource(10,10,10);
-        iconPanel.add(outsideLightSource);
+        ExternalLightSource externalLightSource=new ExternalLightSource();
+        iconPanel.add(externalLightSource);
 
         add(iconPanel,BorderLayout.CENTER);
     }
