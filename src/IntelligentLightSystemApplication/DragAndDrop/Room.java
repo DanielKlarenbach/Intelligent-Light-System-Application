@@ -45,11 +45,25 @@ public class Room extends JPanel implements DropTargetListener {
 
                 String[] values = data.split(";");
                 e.acceptDrop(DnDConstants.ACTION_COPY);
-                Sensor sensor=new Sensor(Double.parseDouble(values[0]),Double.parseDouble(values[1]),Double.parseDouble(values[2]));
-                sensor.setBounds(e.getLocation().x,e.getLocation().y,200,200);
-                add(sensor);
+                if(values[0].equals("Sensor")) {
+                    Sensor sensor = new Sensor(Double.parseDouble(values[1]), Double.parseDouble(values[2]), Double.parseDouble(values[3]));
+                    sensor.setBounds(e.getLocation().x, e.getLocation().y, 200, 200);
+                    add(sensor);
+                }
+                if(values[0].equals("LightSource")) {
+                    LightSource lightSource = new LightSource(Double.parseDouble(values[1]), Double.parseDouble(values[2]), Double.parseDouble(values[3]));
+                    lightSource.setBounds(e.getLocation().x, e.getLocation().y, 200, 200);
+                    add(lightSource);
+                }
+                if(values[0].equals("OutsideLightSource")) {
+                    OutsideLightSource outsideLightSource = new OutsideLightSource(Double.parseDouble(values[1]), Double.parseDouble(values[2]), Double.parseDouble(values[3]));
+                    outsideLightSource.setBounds(e.getLocation().x, e.getLocation().y, 200, 200);
+                    add(outsideLightSource);
+                }
                 revalidate();
                 repaint();
+                System.out.println("coś");
+
                 e.dropComplete(true);
             }
             else {

@@ -42,7 +42,7 @@ public class LightSource extends JLabel implements DragGestureListener, DragSour
     @Override
     public void dragGestureRecognized(DragGestureEvent e) {
         // drag anything ...
-        e.startDrag(DragSource.DefaultCopyDrop, new StringSelection(getx()+";"+getz()+";"+gety()), this); // drag source listener
+        e.startDrag(DragSource.DefaultCopyDrop, new StringSelection("LightSource;"+getx()+";"+getz()+";"+gety()), this); // drag source listener
     }
 
     @Override

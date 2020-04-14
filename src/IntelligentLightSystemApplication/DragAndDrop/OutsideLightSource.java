@@ -4,21 +4,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 
-public class Sensor extends JLabel implements DragGestureListener, DragSourceListener {
+public class OutsideLightSource extends JLabel implements DragGestureListener, DragSourceListener {
     private double x;
     private double y;
     private double z;
 
-
-    public Sensor(double x, double y,double z){
+    public OutsideLightSource(double x, double y,double z){
         // Sensor's image configuration
-        super(new ImageIcon("src/resources/sensor.png"));
+        super(new ImageIcon("src/resources/OutsideLightSource.png"));
         setHorizontalTextPosition(JLabel.CENTER);
         setVerticalTextPosition(JLabel.BOTTOM);
-        setText("sensor");
+        setText("outside light source");
         setPreferredSize(new Dimension(100,100));
 
         // Sensor's coordinates in the room
@@ -45,7 +42,7 @@ public class Sensor extends JLabel implements DragGestureListener, DragSourceLis
     @Override
     public void dragGestureRecognized(DragGestureEvent e) {
         // drag anything ...
-        e.startDrag(DragSource.DefaultCopyDrop, new StringSelection("Sensor;"+getx()+";"+getz()+";"+gety()), this); // drag source listener
+        e.startDrag(DragSource.DefaultCopyDrop, new StringSelection("OutsideLightSource;"+getx()+";"+getz()+";"+gety()), this); // drag source listener
     }
 
     @Override
@@ -73,4 +70,3 @@ public class Sensor extends JLabel implements DragGestureListener, DragSourceLis
 
     }
 }
-
