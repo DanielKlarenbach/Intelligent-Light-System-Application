@@ -2,15 +2,14 @@ package IntelligentLightSystemApplication.DragAndDrop;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.dnd.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
-public class Sensor extends JLabel implements DragGestureListener, DragSourceListener {
+public class Sensor extends JLabel implements MouseMotionListener {
     // sensor's coordinates in the room
     private double x;
     private double y;
     private double z;
-
 
     public Sensor(double x, double y,double z){
         // sensor's image configuration
@@ -24,8 +23,7 @@ public class Sensor extends JLabel implements DragGestureListener, DragSourceLis
         this.y=y;
         this.z=z;
 
-        DragSource dragSource = DragSource.getDefaultDragSource();
-        dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
+        addMouseMotionListener(this);
     }
 
     public double getx(){
@@ -41,28 +39,12 @@ public class Sensor extends JLabel implements DragGestureListener, DragSourceLis
     }
 
     @Override
-    public void dragGestureRecognized(DragGestureEvent e) {
-        e.startDrag(DragSource.DefaultCopyDrop, new StringSelection("Sensor;"+getx()+";"+getz()+";"+gety()), this);
+    public void mouseDragged(MouseEvent e) {
+        setBounds(e.getX(),e.getY(), 100, 100);
     }
 
     @Override
-    public void dragEnter(DragSourceDragEvent dsde) {
-    }
-
-    @Override
-    public void dragOver(DragSourceDragEvent dsde) {
-    }
-
-    @Override
-    public void dropActionChanged(DragSourceDragEvent dsde) {
-    }
-
-    @Override
-    public void dragExit(DragSourceEvent dse) {
-    }
-
-    @Override
-    public void dragDropEnd(DragSourceDropEvent dsde) {
+    public void mouseMoved(MouseEvent e) {
     }
 }
 

@@ -27,7 +27,7 @@ public class Room extends JPanel implements DropTargetListener {
                 e.acceptDrop(DnDConstants.ACTION_COPY);
 
                 if(values[0].equals("Sensor")) {
-                    Sensor sensor = new Sensor(Double.parseDouble(values[1]), Double.parseDouble(values[2]), Double.parseDouble(values[3]));
+                    Sensor sensor = new Sensor(0,0,0);
                     sensor.setBounds(e.getLocation().x, e.getLocation().y, 200, 200);
                     add(sensor);
                 }

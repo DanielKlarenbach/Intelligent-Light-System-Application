@@ -1,4 +1,8 @@
-package IntelligentLightSystemApplication.DragAndDrop;
+package IntelligentLightSystemApplication.DragAndDrop.DropMenu;
+
+import IntelligentLightSystemApplication.DragAndDrop.ExternalLightSource;
+import IntelligentLightSystemApplication.DragAndDrop.LightSource;
+import IntelligentLightSystemApplication.DragAndDrop.Sensor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +21,7 @@ public class DropMenu extends JPanel {
         JPanel iconPanel=new JPanel();
         iconPanel.setLayout(new FlowLayout(FlowLayout.CENTER,50,0));
 
-        Sensor sensor=new Sensor(10,10,10);
+        SensorDropIcon sensor=new SensorDropIcon();
         iconPanel.add(sensor);
 
         LightSource lightSource=new LightSource(10,10,10);
