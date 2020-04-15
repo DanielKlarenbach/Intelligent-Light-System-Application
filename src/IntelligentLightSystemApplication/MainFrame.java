@@ -1,8 +1,7 @@
 package IntelligentLightSystemApplication;
 
-import IntelligentLightSystemApplication.DragAndDrop.DropMenu.DropMenu;
-import IntelligentLightSystemApplication.ModeMenu.ModeMenu;
-import IntelligentLightSystemApplication.DragAndDrop.Room;
+import IntelligentLightSystemApplication.Buttons.Buttons;
+import IntelligentLightSystemApplication.Room.Room;
 import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
 import IntelligentLightSystemApplication.Menu.MainMenu;
 import IntelligentLightSystemApplication.SensorList.SensorList;
@@ -16,51 +15,50 @@ public class MainFrame extends JFrame {
     MainFrame(){
         // setting Main Frame attributes
         setTitle("Intelligent Light System Application");
-        setPreferredSize(new Dimension(1500+100, 800+80)); //25px - menu, 3*10px spaces betweeen components
+        setPreferredSize(new Dimension(1500+10+10+10+10, 800+50+10+10+10)); //50px - menu, 3*10px spaces betweeen components
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         setVisible(true);
-        setLayout(new BorderLayout(10,10));
+        setLayout(new BorderLayout(0,10));
 
-        //DragDrop and Mode panel
-        JPanel dragAndDropPanel=new JPanel();
-        dragAndDropPanel.setLayout(new BorderLayout(10,10));
-        dragAndDropPanel.setPreferredSize(new Dimension(1000, 800));
-        dragAndDropPanel.setBorder(new EmptyBorder(0,10,10,0));
-
-        Room room=new Room();
-        dragAndDropPanel.add(new DropMenu(),BorderLayout.WEST);
-        dragAndDropPanel.add(new ModeMenu(), BorderLayout.EAST);
-        dragAndDropPanel.add(room,BorderLayout.SOUTH);
-
-        add(dragAndDropPanel,BorderLayout.WEST);
-
-        //Menu
-        MainMenu menu=new MainMenu(room);
+        // menu
+        MainMenu menu=new MainMenu();
         add(menu,BorderLayout.NORTH);
 
-        //Lists panel
-        JPanel lists=new JPanel();
-        lists.setLayout(new BorderLayout(10,10));
-        lists.setPreferredSize(new Dimension(500, 800));
-        lists.setBorder(new EmptyBorder(0,0,10,10));
+        // application panel
+        JPanel applicationPanel=new JPanel();
+        applicationPanel.setLayout(new BorderLayout(10,10));
+        applicationPanel.setBorder(new EmptyBorder(0,10,10,10));
 
-        //Sensor List
-        SensorList sensorList=new SensorList();
-        JScrollPane sensorListScroller = new JScrollPane();
-        sensorListScroller.setViewportView(sensorList);
-        //lists.add(sensorListScroller);
-        lists.add(sensorList,BorderLayout.NORTH);
+            // buttons
+            applicationPanel.add(new Buttons(),BorderLayout.WEST);
 
-        //LightSource List
-        LightSourceList lightSourceList=new LightSourceList();
-        JScrollPane lightSourceListScroller = new JScrollPane();
-        lightSourceListScroller.setViewportView(lightSourceList);
-        //add( lightSourceListScroller );
-        lists.add(lightSourceList,BorderLayout.SOUTH);
+            // room
+            applicationPanel.add(new Room(),BorderLayout.CENTER);
 
-        add(lists,BorderLayout.EAST);
+            // list's panel
+            JPanel lists=new JPanel();
+            lists.setLayout(new BorderLayout(10,10));
+            lists.setPreferredSize(new Dimension(500, 800));
+
+                // sensor List
+                SensorList sensorList=new SensorList();
+                JScrollPane sensorListScroller = new JScrollPane();
+                sensorListScroller.setViewportView(sensorList);
+                //lists.add(sensorListScroller);
+                lists.add(sensorList,BorderLayout.NORTH);
+
+                // lightSource List
+                LightSourceList lightSourceList=new LightSourceList();
+                JScrollPane lightSourceListScroller = new JScrollPane();
+                lightSourceListScroller.setViewportView(lightSourceList);
+                //add( lightSourceListScroller );
+                lists.add(lightSourceList,BorderLayout.SOUTH);
+
+            applicationPanel.add(lists,BorderLayout.EAST);
+
+        add(applicationPanel);
 
         pack();
     }

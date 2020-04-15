@@ -2,7 +2,7 @@ package IntelligentLightSystemApplication.Menu;
 
 import javax.swing.*;
 
-public class FileMenu extends JMenu {
+class FileMenu extends JMenu {
     FileMenu() {
         super("File");
         JMenuItem tempMenuItem = new JMenuItem("Save");
