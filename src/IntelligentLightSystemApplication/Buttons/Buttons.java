@@ -16,5 +16,8 @@ public class Buttons extends JPanel {
 
         ExternalLightSourceButton externalLightSourceButton=new ExternalLightSourceButton();
         add(externalLightSourceButton);
+
+        WallButton wallButton=new WallButton();
+        add(wallButton);
     }
 }
