@@ -32,10 +32,11 @@ public class MainFrame extends JFrame {
         applicationPanel.setBorder(new EmptyBorder(0,10,10,10));
 
             // buttons
-            applicationPanel.add(new Buttons(),BorderLayout.WEST);
+            Room room=new Room();
+            applicationPanel.add(new Buttons(room),BorderLayout.WEST);
 
             // room
-            applicationPanel.add(new Room(),BorderLayout.CENTER);
+            applicationPanel.add(room,BorderLayout.CENTER);
 
             // list's panel
             JPanel lists=new JPanel();
