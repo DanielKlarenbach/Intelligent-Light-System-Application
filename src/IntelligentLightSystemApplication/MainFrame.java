@@ -47,14 +47,14 @@ public class MainFrame extends JFrame {
                 SensorList sensorList=new SensorList();
                 JScrollPane sensorListScroller = new JScrollPane();
                 sensorListScroller.setViewportView(sensorList);
-                //lists.add(sensorListScroller);
+                lists.add(sensorListScroller);
                 lists.add(sensorList,BorderLayout.NORTH);
 
                 // lightSource List
                 LightSourceList lightSourceList=new LightSourceList();
                 JScrollPane lightSourceListScroller = new JScrollPane();
                 lightSourceListScroller.setViewportView(lightSourceList);
-                //add( lightSourceListScroller );
+                add( lightSourceListScroller );
                 lists.add(lightSourceList,BorderLayout.SOUTH);
 
             applicationPanel.add(lists,BorderLayout.EAST);
