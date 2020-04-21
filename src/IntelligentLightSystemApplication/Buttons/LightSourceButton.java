@@ -13,10 +13,11 @@ class LightSourceButton extends JButton{
     LightSourceButton(Room room){
         super(new ImageIcon("src/resources/LightSourceButton.png"));
         setPreferredSize(new Dimension(50,50));
+        setBackground(Color.WHITE);
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
                 room.paintLightSource=!room.paintLightSource;
-                room.lightSources.add(new LightSource(200,200));
+                room.lightSources.add(new LightSource(200,200, room.getRoomHeight()-50));
             } });
     }
 }
