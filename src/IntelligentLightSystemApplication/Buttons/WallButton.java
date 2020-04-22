@@ -13,7 +13,7 @@ class WallButton extends JButton {
         setPreferredSize(new Dimension(50,50));
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
-                room.paintWall=!room.paintWall;
+                room.setPaintWall(!room.isPaintWall());
             } });
     }
 }

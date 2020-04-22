@@ -21,5 +21,14 @@ public class Buttons extends JPanel {
 
         WallButton wallButton=new WallButton(room);
         add(wallButton);
+
+        XYAxisButton xyAxisButton=new XYAxisButton(room);
+        add(xyAxisButton);
+
+        XZAxisButton xzAxisButton=new XZAxisButton(room);
+        add(xzAxisButton);
+
+        DeleteButton deleteButton=new DeleteButton(room);
+        add(deleteButton);
     }
 }
