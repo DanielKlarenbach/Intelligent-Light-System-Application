@@ -13,7 +13,7 @@ class ExternalLightSourceButton extends JButton{
         setPreferredSize(new Dimension(50,50));
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
-                room.paintExternalLightSource=!room.paintExternalLightSource;
+                room.setPaintExternalLightSource(!room.isPaintExternalLightSource());
             } });
     }
 }

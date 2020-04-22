@@ -15,8 +15,8 @@ class SensorButton extends JButton  {
         setBackground(Color.WHITE);
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
-                room.paintSensor=!room.paintSensor;
-                room.sensors.add(new Sensor(200,200,room.getRoomHeight()-50));
+                room.setPaintSensor(!room.isPaintSensor());
+                room.getSensors().add(new Sensor(200,200,room.getRoomHeight()-50));
             } });
     }
 }

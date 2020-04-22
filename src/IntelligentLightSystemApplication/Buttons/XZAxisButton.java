@@ -14,7 +14,7 @@ public class XZAxisButton extends JButton {
         setBackground(Color.WHITE);
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
-                room.paintXZAxis=!room.paintXZAxis;
+                room.setPaintXZAxis(!room.isPaintXZAxis());
             } });
     }
 }

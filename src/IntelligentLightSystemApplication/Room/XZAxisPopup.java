@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class XZAxisPopup extends JDialog {
@@ -21,8 +20,6 @@ public class XZAxisPopup extends JDialog {
 
         lightSource.setPlaced(true);
 
-        // straight equation
-
         jpanel=new JPanel(){
             public void paint(Graphics g){
                 ArrayList<Sensor> sensors=room.getSensors();
@@ -38,17 +35,15 @@ public class XZAxisPopup extends JDialog {
                     new Sensor(evaluateX(sensors.get(i).getX(),sensors.get(i).getY()),sensors.get(i).getZ(),0).draw(g2d);
                 }
                 for(int i=0;i<lightSources.size();i++) new LightSource(evaluateX(lightSources.get(i).getX(),lightSources.get(i).getY()),lightSources.get(i).getZ(),0).draw(g2d);
-                //lightSource.draw(g2d);
             }
         };
         jpanel.setPreferredSize(new Dimension(400,room.getRoomHeight()));
         jpanel.setBackground(Color.WHITE);
         add(jpanel,BorderLayout.CENTER);
 
-        //add(room.getCurrentLightSource()):
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                if (room.paintXZAxis){
+                if (room.isPaintXZAxis()){
 
                 }
             }
@@ -63,18 +58,11 @@ public class XZAxisPopup extends JDialog {
         double x2=room.getCurrentLightSource().getAxisX();
         double y1=room.getCurrentLightSource().getY();
         double y2=room.getCurrentLightSource().getAxisY();
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println("koniec xy");
         double A=(-1)/((y1-y2)/(x1-x2));
         double B=1;
-        System.out.println(A);
         double C=(-1)*(y1-A*x1);
         A=-A;
-        System.out.println(C);
         newX= (int) (Math.abs(A*x+B*y+C)/Math.sqrt(Math.pow(A,2)+Math.pow(B,2)));
-        System.out.println(newX);
         return newX;
     }
-
 }

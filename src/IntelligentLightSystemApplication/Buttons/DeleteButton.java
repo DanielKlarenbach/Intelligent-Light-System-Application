@@ -14,7 +14,7 @@ public class DeleteButton extends JButton {
         setBackground(Color.WHITE);
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
-                room.delete=!room.delete;
+                room.setDelete(!room.isDelete());
             } });
     }
 }

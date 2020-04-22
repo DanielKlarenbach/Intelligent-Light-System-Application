@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import static IntelligentLightSystemApplication.Room.LightSource.getAtLightSource;
@@ -13,55 +14,43 @@ public class Room extends JPanel {
     private int roomHeight=400;
 
     // action listeners
-    public boolean paintWall=false;
-    public boolean paintSensor=false;
-    public boolean paintLightSource=false;
-    public boolean paintExternalLightSource=false;
-    public boolean paintXYAxis=false;
-    public boolean paintXZAxis=false;
-    public boolean delete=false;
-
+    private boolean paintWall=false;
+    private boolean paintSensor=false;
+    private boolean paintLightSource=false;
+    private boolean paintExternalLightSource=false;
+    private boolean paintXYAxis=false;
+    private boolean paintXZAxis=false;
+    private boolean delete=false;
 
     private boolean roomIsPainted=false;
 
-    private Wall[] crossPoints=new Wall[340];
-    private int count=0;
-
+    // objects in the room
     private ArrayList<Wall> walls=new ArrayList<>();
-    public ArrayList<Sensor> sensors=new ArrayList<>();
-    public ArrayList<LightSource> lightSources=new ArrayList<>();
+    private ArrayList<Sensor> sensors=new ArrayList<>();
+    private ArrayList<LightSource> lightSources=new ArrayList<>();
 
     // currents
     private LightSource currentLightSource;
     private Sensor currentSensor;
     private Wall currentWall;
 
-    public LightSource getCurrentLightSource() {
-        return currentLightSource;
-    }
-
     public Room(){
         setPreferredSize(new Dimension(950, 800));
         setBorder(BorderFactory.createLineBorder(Color.black));
         setBackground(Color.WHITE);
         setLayout(null);
-        for(int i=0;i<=950;i+=50) {
-            for (int j = 0; j <= 800; j += 50) addWall(i, j);
-        }
 
         addMouseListener(new MouseAdapter(){
             public void mousePressed(MouseEvent e){
                 if(!roomIsPainted) {
                     if (paintWall) {
-                        if (walls.size() > 0) walls.get(walls.size() - 1).setSelected(false);
-                        Wall crossPoint = getAtWall(e.getX(), e.getY());
-                        crossPoint.setSelected(true);
-                        if (walls.size() > 0 && crossPoint.getX() == walls.get(0).getX() && crossPoint.getY() == walls.get(0).getY()) {
-                            crossPoint.setSelected(false);
+                        currentWall = addWall(e);
+                        if (walls.size() > 0 && currentWall.getX() == walls.get(0).getX() && currentWall.getY() == walls.get(0).getY()) {
                             roomIsPainted = true;
+                            currentWall=null;
                             paintWall=false;
                         }
-                        else walls.add(crossPoint);
+                        else walls.add(currentWall);
                         repaint();
                     }
                 }
@@ -106,6 +95,11 @@ public class Room extends JPanel {
 
         addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e) {
+                if(paintWall && currentWall!=null){
+                    currentWall=addWall(e);
+                    repaint();
+                }
+
                 if (paintSensor) {
                     sensors.get(sensors.size() - 1).setX(e.getX() - 5); // -5 so that sensor would be visible
                     sensors.get(sensors.size() - 1).setY(e.getY() - 5);
@@ -127,8 +121,67 @@ public class Room extends JPanel {
         });
     }
 
-    public ArrayList<Wall> getWalls() {
-        return walls;
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        Graphics2D g2d=(Graphics2D)g;
+
+        // net
+        g2d.setColor(Color.lightGray);
+        for(int i=0;i<=950;i+=10) g2d.drawLine(i,0,i,820);
+        for(int i=0;i<=800;i+=10) g2d.drawLine(0,i,950,i);
+        g2d.setStroke(new BasicStroke(3));
+        for(int i=0;i<=950;i+=100) g2d.drawLine(i,0,i,820);
+        for(int i=0;i<=800;i+=100) g2d.drawLine(0,i,950,i);
+
+        // walls, sensors, lightsources
+        paintWall(g2d);
+        for(int i=0;i<sensors.size();i++) sensors.get(i).draw(g2d);
+        for(int i=0;i<lightSources.size();i++) lightSources.get(i).draw(g2d);
+
+        if(paintWall && walls.size()>0 && currentWall!=null){
+            Wall wall0=walls.get(walls.size()-1);
+            g2d.draw(new Line2D.Float(wall0.getX(), wall0.getY(), currentWall.getX(), currentWall.getY()));
+        }
+
+        // axis
+        if(paintXYAxis) drawAxisXY(currentLightSource.getAxisX(),currentLightSource.getAxisY(),g2d);
+    }
+
+    private void drawAxisXY(int x, int y, Graphics2D g2d){
+        g2d.setColor(Color.black);
+        g2d.setStroke(new BasicStroke(1));
+        g2d.drawLine(currentLightSource.getX(),currentLightSource.getY(),x,y);
+    }
+
+    Wall addWall(MouseEvent e) {
+        Wall wall=new Wall();
+        wall.setX((e.getX()/10)*10+5); // center of clicked square
+        wall.setY((e.getY()/10)*10+5);
+        return wall;
+    }
+
+    private void paintWall(Graphics2D g2d){
+        g2d.setColor(Color.black);
+        g2d.setStroke(new BasicStroke(11));
+        if(walls.size()>1) {
+            for(int i = 0; i< walls.size()-1; i++) {
+                Wall wall1=walls.get(i);
+                Wall wall2=walls.get(i+1);
+                Wall wall0=walls.get(0);
+                g2d.draw(new Line2D.Float(wall1.getX(), wall1.getY(), wall2.getX(), wall2.getY()));
+                if(roomIsPainted==true && i==walls.size()-2) g2d.draw(new Line2D.Float(wall2.getX(), wall2.getY(), wall0.getX(), wall0.getY()));
+            }
+        }
+    }
+
+    // setters and getters
+
+    public int getRoomHeight() {
+        return roomHeight;
+    }
+
+    public LightSource getCurrentLightSource() {
+        return currentLightSource;
     }
 
     public ArrayList<Sensor> getSensors() {
@@ -139,59 +192,32 @@ public class Room extends JPanel {
         return lightSources;
     }
 
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
-        Graphics2D g2d=(Graphics2D)g;
+    public boolean isPaintXZAxis() { return paintXZAxis; }
 
-        // net
-        g2d.setColor(new Color(204, 255, 255));
-        for(int i=0;i<=950;i+=50) g2d.drawLine(i,0,i,820);
-        for(int i=0;i<=800;i+=50) g2d.drawLine(0,i,950,i);
-        for(int i=0;i<crossPoints.length;i++) crossPoints[i].draw(g);
+    public boolean isPaintWall() { return paintWall; }
 
-        paintWall(g2d);
-        for(int i=0;i<sensors.size();i++) sensors.get(i).draw(g2d);
-        for(int i=0;i<lightSources.size();i++) lightSources.get(i).draw(g2d);
+    public boolean isPaintSensor() { return paintSensor; }
 
-        // axis
-        if(paintXYAxis) drawAxisXY(currentLightSource.getAxisX(),currentLightSource.getAxisY(),g2d);
-    }
+    public boolean isPaintLightSource() { return paintLightSource; }
 
-    private void drawAxisXY(int x, int y, Graphics2D g2d){
-        g2d.setColor(Color.black);
-        g2d.drawLine(currentLightSource.getX(),currentLightSource.getY(),x,y);
-    }
+    public boolean isPaintExternalLightSource() { return paintExternalLightSource; }
 
-    void addWall(int x, int y){
-        if(count==crossPoints.length)return;
-        crossPoints[count]=new Wall();
-        crossPoints[count].setX(x);
-        crossPoints[count].setY(y);
-        count++;
-    }
+    public boolean isPaintXYAxis() { return paintXYAxis; }
 
-    Wall getAtWall(int x, int y) {
-        for (int i = 0; i < count; i++) {
-            if ((x - crossPoints[i].getX()) * (x - crossPoints[i].getX()) + (y - crossPoints[i].getY()) * (y - crossPoints[i].getY()) <= (crossPoints[i].getRadius()+10) * (crossPoints[i].getRadius()+10)) // radius+10 so thaht it would be easier to tag a point
-                return crossPoints[i];
-        }
-        return null;
-    }
+    public boolean isDelete() { return delete; }
 
-    private void paintWall(Graphics2D g2d){
-        g2d.setColor(Color.black);
-        if(walls.size()>1) {
-            for(int i = 0; i< walls.size()-1; i++) {
-                g2d.drawLine(walls.get(i).getX(), walls.get(i).getY(), walls.get(i + 1).getX(), walls.get(i + 1).getY());
-                walls.get(i).setSelected(false);
-                walls.get(i + 1).setSelected(false);
-                if(roomIsPainted==true && i==walls.size()-2) g2d.drawLine(walls.get(i+1).getX(), walls.get(i+1).getY(), walls.get(0).getX(), walls.get(0).getY());
-            }
-        }
-    }
+    public void setPaintWall(boolean paintWall) { this.paintWall = paintWall; }
 
-    public int getRoomHeight() {
-        return roomHeight;
-    }
+    public void setPaintSensor(boolean paintSensor) { this.paintSensor = paintSensor; }
+
+    public void setPaintLightSource(boolean paintLightSource) { this.paintLightSource = paintLightSource; }
+
+    public void setPaintExternalLightSource(boolean paintExternalLightSource) { this.paintExternalLightSource = paintExternalLightSource; }
+
+    public void setPaintXYAxis(boolean paintXYAxis) { this.paintXYAxis = paintXYAxis; }
+
+    public void setPaintXZAxis(boolean paintXZAxis) { this.paintXZAxis = paintXZAxis; }
+
+    public void setDelete(boolean delete) { this.delete = delete; }
 }
 

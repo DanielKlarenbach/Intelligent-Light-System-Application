@@ -16,8 +16,8 @@ class LightSourceButton extends JButton{
         setBackground(Color.WHITE);
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
-                room.paintLightSource=!room.paintLightSource;
-                room.lightSources.add(new LightSource(200,200, room.getRoomHeight()-50));
+                room.setPaintLightSource(!room.isPaintLightSource());
+                room.getLightSources().add(new LightSource(200,200, room.getRoomHeight()-50));
             } });
     }
 }
