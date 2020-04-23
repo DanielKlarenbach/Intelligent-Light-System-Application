@@ -7,13 +7,13 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-class ExternalLightSourceButton extends JButton{
-    ExternalLightSourceButton(Room room){
+class WindowButton extends JButton{
+    WindowButton(Room room){
         super(new ImageIcon("src/resources/ExternalLightSourceButton.png"));
         setPreferredSize(new Dimension(50,50));
         addMouseListener( new MouseAdapter(){
             public void mouseClicked(MouseEvent e){
-                room.setPaintExternalLightSource(!room.isPaintExternalLightSource());
+                room.setPaintWindow(!room.isPaintWindow());
             } });
     }
 }
