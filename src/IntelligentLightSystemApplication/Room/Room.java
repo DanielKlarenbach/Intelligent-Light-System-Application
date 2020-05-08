@@ -17,22 +17,26 @@ public class Room extends JPanel {
     private boolean paintWall=false;
     private boolean paintSensor=false;
     private boolean paintLightSource=false;
-    private boolean paintExternalLightSource=false;
+    private boolean paintWindow=false;
     private boolean paintXYAxis=false;
     private boolean paintXZAxis=false;
     private boolean delete=false;
 
     private boolean roomIsPainted=false;
 
+    private boolean windowEnd=false;
+
     // objects in the room
     private ArrayList<Wall> walls=new ArrayList<>();
     private ArrayList<Sensor> sensors=new ArrayList<>();
     private ArrayList<LightSource> lightSources=new ArrayList<>();
+    private  ArrayList<Window> windows =new ArrayList<>();
 
     // currents
     private LightSource currentLightSource;
     private Sensor currentSensor;
     private Wall currentWall;
+    private Window currentWindow;
 
     public Room(){
         setPreferredSize(new Dimension(950, 800));
@@ -54,7 +58,23 @@ public class Room extends JPanel {
                         repaint();
                     }
                 }
+                if(paintWindow){             // create new or take the last one from table
+                    if(windowEnd==false) {
+                        Window window = new Window();
+                        currentWindow = setWindow(e,window, false);
+                        windowEnd = true;
+                        windows.add(currentWindow);
+                    }
+                    else{
+                        currentWindow = setWindow(e,windows.get(windows.size()-1),true);
+                        windowEnd = false;
+                        paintWindow=false;
+                        windows.add(currentWindow);
+                    }
+                    //currentWindow = null;
+                    repaint();
 
+                }
                 if(paintSensor){
                     sensors.get(sensors.size()-1).setPlaced(true);
                     paintSensor=false;
@@ -99,6 +119,12 @@ public class Room extends JPanel {
                     currentWall=addWall(e);
                     repaint();
                 }
+                if(paintWindow && currentWindow!=null){
+                    if(windowEnd==true) {
+                        currentWindow = addWindow(e, windowEnd);        //      do rysowania na bieżąco
+                    }
+                    repaint();
+                }
 
                 if (paintSensor) {
                     sensors.get(sensors.size() - 1).setX(e.getX() - 5); // -5 so that sensor would be visible
@@ -135,12 +161,20 @@ public class Room extends JPanel {
 
         // walls, sensors, lightsources
         paintWall(g2d);
+
         for(int i=0;i<sensors.size();i++) sensors.get(i).draw(g2d);
         for(int i=0;i<lightSources.size();i++) lightSources.get(i).draw(g2d);
 
         if(paintWall && walls.size()>0 && currentWall!=null){
             Wall wall0=walls.get(walls.size()-1);
             g2d.draw(new Line2D.Float(wall0.getX(), wall0.getY(), currentWall.getX(), currentWall.getY()));
+        }
+        paintWindow(g2d);
+        if(paintWindow && windows.size()>0 && currentWindow!=null){      //rysowanie ciągnięcia linii                                               //////////
+            Window window=windows.get(windows.size()-1);
+            if(currentWindow.getX2()!=0 && currentWindow.getY2()!=0) {
+                g2d.draw(new Line2D.Float(window.getX1(), window.getY1(), currentWindow.getX2() , currentWindow.getY2() ));
+            }
         }
 
         // axis
@@ -158,6 +192,43 @@ public class Room extends JPanel {
         wall.setX((e.getX()/10)*10+5); // center of clicked square
         wall.setY((e.getY()/10)*10+5);
         return wall;
+    }
+    Window addWindow(MouseEvent e, boolean windowEnd) {
+        Window window=new Window();
+        if(windowEnd==false) {
+            window.setX1((e.getX() / 10) * 10 + 5); // center of clicked square
+            window.setY1((e.getY() / 10) * 10 + 5);
+            //currentWindow=null;
+        }else{
+            window.setX2((e.getX() / 10) * 10 + 5); // center of clicked square
+            window.setY2((e.getY() / 10) * 10 + 5);
+
+        }
+        return window;
+    }
+    //w zależności od kliknięcia mamy albo współrzędne początku albo końca
+    Window setWindow(MouseEvent e,Window window, boolean windowEnd) {
+       // Window window=new Window();
+        if(windowEnd==false) {
+            window.setX1((e.getX() / 10) * 10 + 5); // center of clicked square
+            window.setY1((e.getY() / 10) * 10 + 5);
+        }else{
+            window.setX2((e.getX() / 10) * 10 + 5); // center of clicked square
+            window.setY2((e.getY() / 10) * 10 + 5);
+        }
+        return window;
+    }
+
+
+    private void paintWindow(Graphics2D g2d){
+        g2d.setColor(Color.cyan);
+        g2d.setStroke(new BasicStroke(11));
+        if(windows.size()>1) {
+            for (int i = 0; i < windows.size() - 1; i++) {
+                Window window = windows.get(i);
+                g2d.draw(new Line2D.Float(window.getX1(), window.getY1(), window.getX2(), window.getY2()));
+            }
+        }
     }
 
     private void paintWall(Graphics2D g2d){
@@ -200,7 +271,7 @@ public class Room extends JPanel {
 
     public boolean isPaintLightSource() { return paintLightSource; }
 
-    public boolean isPaintExternalLightSource() { return paintExternalLightSource; }
+    public boolean isPaintWindow() { return paintWindow; }
 
     public boolean isPaintXYAxis() { return paintXYAxis; }
 
@@ -212,7 +283,7 @@ public class Room extends JPanel {
 
     public void setPaintLightSource(boolean paintLightSource) { this.paintLightSource = paintLightSource; }
 
-    public void setPaintExternalLightSource(boolean paintExternalLightSource) { this.paintExternalLightSource = paintExternalLightSource; }
+    public void setPaintWindow(boolean paintWindow) { this.paintWindow = paintWindow; }
 
     public void setPaintXYAxis(boolean paintXYAxis) { this.paintXYAxis = paintXYAxis; }
 

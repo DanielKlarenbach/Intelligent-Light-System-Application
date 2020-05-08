@@ -1,6 +1,8 @@
 package IntelligentLightSystemApplication.Menu;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 class FileMenu extends JMenu {
     FileMenu() {
@@ -26,9 +28,10 @@ class FileMenu extends JMenu {
             } });*/
         add(tempMenuItem);
         tempMenuItem = new JMenuItem("Exit");
-        /*tempMenu.addActionListener( new ActionListener(){
+        tempMenuItem.addActionListener( new ActionListener(){
             public void actionPerformed(ActionEvent e){
-            } });*/
+                System.exit(0);
+            } });
         add(tempMenuItem);
     }
 }
