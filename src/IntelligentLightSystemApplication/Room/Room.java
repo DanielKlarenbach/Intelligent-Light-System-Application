@@ -1,5 +1,7 @@
 package IntelligentLightSystemApplication.Room;
 
+import lombok.Data;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 
 import static IntelligentLightSystemApplication.Room.LightSource.getAtLightSource;
 
+@Data
 public class Room extends JPanel {
     //
     private int roomHeight=400;
@@ -58,12 +61,17 @@ public class Room extends JPanel {
                 if(paintSensor){
                     sensors.get(sensors.size()-1).setPlaced(true);
                     paintSensor=false;
+                    sensors.get(sensors.size()-1).countIlluminance(lightSources);
                     repaint();
                 }
 
                 if(paintLightSource){
                     lightSources.get(lightSources.size()-1).setPlaced(true);
                     paintLightSource=false;
+                    for(int i=0;i<sensors.size();i++) {
+                        sensors.get(i).countIlluminance(lightSources);
+                        System.out.println(i+" illuminance"+sensors.get(i).getIlluminance());
+                    }
                     repaint();
                 }
 
@@ -89,6 +97,10 @@ public class Room extends JPanel {
                         XZAxisPopup popup=new XZAxisPopup(Room.this);
                         repaint();
                     }
+                }
+                if (e.getClickCount() == 2) {
+                    LightSource tempLigthSource=getAtLightSource(e.getX(),e.getY(),lightSources);
+                    new LightSourceConfigurationPopup(tempLigthSource);
                 }
             }
         });
@@ -144,10 +156,10 @@ public class Room extends JPanel {
         }
 
         // axis
-        if(paintXYAxis) drawAxisXY(currentLightSource.getAxisX(),currentLightSource.getAxisY(),g2d);
+        if(paintXYAxis) drawAxis(currentLightSource.getAxisX(),currentLightSource.getAxisY(),g2d);
     }
 
-    private void drawAxisXY(int x, int y, Graphics2D g2d){
+    private void drawAxis(int x, int y, Graphics2D g2d){
         g2d.setColor(Color.black);
         g2d.setStroke(new BasicStroke(1));
         g2d.drawLine(currentLightSource.getX(),currentLightSource.getY(),x,y);
@@ -173,51 +185,5 @@ public class Room extends JPanel {
             }
         }
     }
-
-    // setters and getters
-
-    public int getRoomHeight() {
-        return roomHeight;
-    }
-
-    public LightSource getCurrentLightSource() {
-        return currentLightSource;
-    }
-
-    public ArrayList<Sensor> getSensors() {
-        return sensors;
-    }
-
-    public ArrayList<LightSource> getLightSources() {
-        return lightSources;
-    }
-
-    public boolean isPaintXZAxis() { return paintXZAxis; }
-
-    public boolean isPaintWall() { return paintWall; }
-
-    public boolean isPaintSensor() { return paintSensor; }
-
-    public boolean isPaintLightSource() { return paintLightSource; }
-
-    public boolean isPaintExternalLightSource() { return paintExternalLightSource; }
-
-    public boolean isPaintXYAxis() { return paintXYAxis; }
-
-    public boolean isDelete() { return delete; }
-
-    public void setPaintWall(boolean paintWall) { this.paintWall = paintWall; }
-
-    public void setPaintSensor(boolean paintSensor) { this.paintSensor = paintSensor; }
-
-    public void setPaintLightSource(boolean paintLightSource) { this.paintLightSource = paintLightSource; }
-
-    public void setPaintExternalLightSource(boolean paintExternalLightSource) { this.paintExternalLightSource = paintExternalLightSource; }
-
-    public void setPaintXYAxis(boolean paintXYAxis) { this.paintXYAxis = paintXYAxis; }
-
-    public void setPaintXZAxis(boolean paintXZAxis) { this.paintXZAxis = paintXZAxis; }
-
-    public void setDelete(boolean delete) { this.delete = delete; }
 }
 

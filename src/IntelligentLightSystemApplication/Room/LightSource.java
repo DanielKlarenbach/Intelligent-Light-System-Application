@@ -1,8 +1,15 @@
 package IntelligentLightSystemApplication.Room;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.awt.*;
 import java.util.ArrayList;
 
+@Setter
+@Getter
+@ToString
 public class LightSource{
     //
     private int x;
@@ -10,6 +17,7 @@ public class LightSource{
     private int z;
     private final int radius=5;
     private Color color=Color.yellow;
+    private String name;
 
     private boolean placed=false;
 
@@ -18,7 +26,9 @@ public class LightSource{
     private int axisY;
     private int axisZ;
 
-    private double solidAngle;
+    private double angle;
+    private double energy;
+    private String type;
 
     public LightSource(int x, int y, int z){
         this.x=x;
@@ -46,69 +56,25 @@ public class LightSource{
         return null;
     }
 
-    // setters and getters
-
-    public int getZ() {
-        return z;
+    int countConeHeight(){
+        return (int) Math.sqrt(Math.pow((getX()-getAxisX()),2)    +   Math.pow((getY()-getAxisY()),2)   +   Math.pow((getZ()-getAxisZ()),2));
     }
 
-    public void setZ(int z) {
-        this.z = z;
+    int countConeRadius(){
+        double radians= Math.toRadians(angle /2);
+        return (int) (Math.tan(radians)*countConeHeight());
     }
 
-    public int getAxisZ() {
-        return axisZ;
+    int countConeHeightWithGivenPoint(float[] point){
+        return (int) Math.sqrt(Math.pow((getX()-point[0]),2)    +   Math.pow((getY()-point[1]),2)   +   Math.pow((getZ()-point[2]),2));
     }
 
-    public void setAxisZ(int axisZ) {
-        this.axisZ = axisZ;
-    }
-
-    public int getAxisX() {
-        return axisX;
-    }
-
-    public void setAxisX(int axisX) {
-        this.axisX = axisX;
-    }
-
-    public int getAxisY() {
-        return axisY;
-    }
-
-    public void setAxisY(int axisY) {
-        this.axisY = axisY;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public boolean isPlaced() {
-        return placed;
-    }
-
-    public void setPlaced(boolean placed) {
-        this.placed = placed;
+    int countConeRadiusWithGivenPoint(float[] point){
+        double radians= Math.toRadians(angle /2);
+        double currentHeight=countConeHeightWithGivenPoint(point);
+        System.out.println("currentHeight"+currentHeight);
+        System.out.println("radians"+radians);
+        System.out.println("tan"+Math.tan(radians));
+        return  (int) (Math.tan(radians)*currentHeight);
     }
 }
