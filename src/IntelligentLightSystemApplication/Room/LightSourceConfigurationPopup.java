@@ -10,15 +10,15 @@ public class LightSourceConfigurationPopup extends JDialog {
         setSize(400, 400);
         setVisible(true);
         setLayout(new GridLayout(4, 2));
-        JTextField name=new JTextField();
+        JTextField  name=new JTextField();
         add(new JLabel("Name"));
         add(name);
         add(new JLabel("Angle"));
-        JTextField angle=new JTextField();
+        JTextField  angle=new JTextField();
         add(angle);
-        add(new JLabel("Energy"));
-        JTextField energy=new JTextField();
-        add(energy);
+        add(new JLabel("Luminous flux"));
+        JTextField luminousFlux=new JTextField();
+        add(luminousFlux);
         add(new JLabel("Type"));
         JTextField type=new JTextField();
         add(type);
@@ -26,9 +26,8 @@ public class LightSourceConfigurationPopup extends JDialog {
             public void windowClosing(WindowEvent e) {
                 lightSource.setName(name.getText());
                 lightSource.setAngle(Double.parseDouble(angle.getText()));
-                lightSource.setEnergy(Double.parseDouble(energy.getText()));
+                lightSource.setLuminousFlux(Double.parseDouble(luminousFlux.getText()));
                 lightSource.setType(type.getText());
-                System.out.println(lightSource);
             }
         });
         pack();

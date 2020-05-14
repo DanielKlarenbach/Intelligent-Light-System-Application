@@ -4,30 +4,38 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 import java.util.ArrayList;
 
 @Setter
 @Getter
 @ToString
 public class LightSource{
-    //
+    // lightSource's coordinates in the room in pixels
     private int x;
     private int y;
     private int z;
+
+    // lightSource's icon properties
     private final int radius=5;
     private Color color=Color.yellow;
-    private String name;
-
     private boolean placed=false;
 
-    // optic axis coordinates
+    // optic axis coordinates in pixels
     private int axisX;
     private int axisY;
     private int axisZ;
 
-    private double angle;
-    private double energy;
+    // popups
+    private XZAxisPopup xyAxisPopup;
+    private LightSourceConfigurationPopup lightSourceConfigurationPopup;
+
+    // lightSource properties
+    private String name;
+    private double angle; // opening angle
+    private double luminousFlux;
     private String type;
 
     public LightSource(int x, int y, int z){
@@ -49,32 +57,23 @@ public class LightSource{
     }
 
     static LightSource getAtLightSource(int x, int y, ArrayList<LightSource> lightSources) {
+        LightSource current;
         for (int i = 0; i < lightSources.size(); i++) {
-            if ((x - lightSources.get(i).getX()) * (x - lightSources.get(i).getX()) + (y - lightSources.get(i).getY()) * (y - lightSources.get(i).getY()) <= (lightSources.get(i).getRadius()+10) * (lightSources.get(i).getRadius()+10))
-                return lightSources.get(i);
+            current=lightSources.get(i);
+            if (Math.pow((x - current.getX()),2) + Math.pow((y - current.getY()),2) <= Math.pow((current.getRadius()+10),2)) return current;
         }
         return null;
     }
 
-    int countConeHeight(){
-        return (int) Math.sqrt(Math.pow((getX()-getAxisX()),2)    +   Math.pow((getY()-getAxisY()),2)   +   Math.pow((getZ()-getAxisZ()),2));
+    // counts the distance in pixels(1px-1cm) between the center of the lightSource and the given point located on the opiticAxis
+    double countConeHeightWithGivenPoint(int[] point){
+        return Math.sqrt(Math.pow((getX()-point[0]),2)    +   Math.pow((getY()-point[1]),2)   +   Math.pow((getZ()-point[2]),2));
     }
 
-    int countConeRadius(){
-        double radians= Math.toRadians(angle /2);
-        return (int) (Math.tan(radians)*countConeHeight());
-    }
-
-    int countConeHeightWithGivenPoint(float[] point){
-        return (int) Math.sqrt(Math.pow((getX()-point[0]),2)    +   Math.pow((getY()-point[1]),2)   +   Math.pow((getZ()-point[2]),2));
-    }
-
-    int countConeRadiusWithGivenPoint(float[] point){
-        double radians= Math.toRadians(angle /2);
+    // counts radius in pixels(1px-1cm) of the cone for given height
+    double countConeRadiusWithGivenPoint(int[] point){
+        double radians=Math.toRadians(angle/2);
         double currentHeight=countConeHeightWithGivenPoint(point);
-        System.out.println("currentHeight"+currentHeight);
-        System.out.println("radians"+radians);
-        System.out.println("tan"+Math.tan(radians));
-        return  (int) (Math.tan(radians)*currentHeight);
+        return Math.tan(radians)*currentHeight;
     }
 }

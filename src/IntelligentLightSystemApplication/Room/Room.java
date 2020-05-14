@@ -1,6 +1,8 @@
 package IntelligentLightSystemApplication.Room;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,105 +12,119 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import static IntelligentLightSystemApplication.Room.LightSource.getAtLightSource;
+import static IntelligentLightSystemApplication.Room.Sensor.getAtSensor;
 
-@Data
+@Setter
+@Getter
+@ToString
 public class Room extends JPanel {
-    //
-    private int roomHeight=400;
+    // room's properties
+    private int roomHeight = 1000; // in pixels(1px-1cm)
 
     // action listeners
-    private boolean paintWall=false;
-    private boolean paintSensor=false;
-    private boolean paintLightSource=false;
-    private boolean paintExternalLightSource=false;
-    private boolean paintXYAxis=false;
-    private boolean paintXZAxis=false;
-    private boolean delete=false;
-
-    private boolean roomIsPainted=false;
+    private boolean paintWall = false;
+    private boolean paintSensor = false;
+    private boolean paintLightSource = false;
+    private boolean paintExternalLightSource = false;
+    private boolean paintXYAxis = false;
+    private boolean paintXZAxis = false;
+    private boolean delete = false;
+    private boolean roomIsPainted = false;
 
     // objects in the room
-    private ArrayList<Wall> walls=new ArrayList<>();
-    private ArrayList<Sensor> sensors=new ArrayList<>();
-    private ArrayList<LightSource> lightSources=new ArrayList<>();
+    private ArrayList<Wall> walls = new ArrayList<>();
+    private ArrayList<Sensor> sensors = new ArrayList<>();
+    private ArrayList<LightSource> lightSources = new ArrayList<>();
 
     // currents
     private LightSource currentLightSource;
     private Sensor currentSensor;
     private Wall currentWall;
 
-    public Room(){
+    public Room() {
         setPreferredSize(new Dimension(950, 800));
         setBorder(BorderFactory.createLineBorder(Color.black));
         setBackground(Color.WHITE);
         setLayout(null);
 
-        addMouseListener(new MouseAdapter(){
-            public void mousePressed(MouseEvent e){
-                if(!roomIsPainted) {
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (!roomIsPainted) {
                     if (paintWall) {
                         currentWall = addWall(e);
                         if (walls.size() > 0 && currentWall.getX() == walls.get(0).getX() && currentWall.getY() == walls.get(0).getY()) {
                             roomIsPainted = true;
-                            currentWall=null;
-                            paintWall=false;
-                        }
-                        else walls.add(currentWall);
+                            currentWall = null;
+                            paintWall = false;
+                        } else walls.add(currentWall);
                         repaint();
                     }
                 }
 
-                if(paintSensor){
-                    sensors.get(sensors.size()-1).setPlaced(true);
-                    paintSensor=false;
-                    sensors.get(sensors.size()-1).countIlluminance(lightSources);
+                if (paintSensor) {
+                    sensors.get(sensors.size() - 1).setPlaced(true);
+                    sensors.get(sensors.size()-1).setSensorConfigurationPopup(new SensorConfigurationPopup(sensors.get(sensors.size()-1)));
+                    paintSensor = false;
+                    sensors.get(sensors.size() - 1).countIlluminance(lightSources);
                     repaint();
                 }
 
-                if(paintLightSource){
-                    lightSources.get(lightSources.size()-1).setPlaced(true);
-                    paintLightSource=false;
-                    for(int i=0;i<sensors.size();i++) {
-                        sensors.get(i).countIlluminance(lightSources);
-                        System.out.println(i+" illuminance"+sensors.get(i).getIlluminance());
-                    }
+                if (paintLightSource) {
+                    lightSources.get(lightSources.size() - 1).setPlaced(true);
+                    lightSources.get(lightSources.size() - 1).setLightSourceConfigurationPopup(new LightSourceConfigurationPopup(lightSources.get(lightSources.size() - 1)));
+                    paintLightSource = false;
                     repaint();
                 }
 
-                if(paintXYAxis){
-                    if(currentLightSource==null) {
+                if (paintXYAxis) {
+                    if (currentLightSource == null) {
                         currentLightSource = getAtLightSource(e.getX(), e.getY(), lightSources);
-                        currentLightSource.setColor(Color.RED);
-                    }
-                    else{
+                        if (currentLightSource != null) currentLightSource.setColor(Color.RED);
+                        else paintXYAxis = false; // no lightSOurce detected int the area
+                    } else {
                         currentLightSource.setAxisX(e.getX());
                         currentLightSource.setAxisY(e.getY());
                         currentLightSource.setColor(Color.yellow);
-                        paintXYAxis=false;
-                        currentLightSource=null;
+                        paintXYAxis = false;
+                        currentLightSource = null;
                     }
                     repaint();
                 }
 
-                if(paintXZAxis){
+                if (paintXZAxis) {
                     currentLightSource = getAtLightSource(e.getX(), e.getY(), lightSources);
-                    if(currentLightSource!=null) {
+                    if (currentLightSource != null) {
                         currentLightSource.setColor(Color.RED);
-                        XZAxisPopup popup=new XZAxisPopup(Room.this);
+                        XZAxisPopup popup = new XZAxisPopup(Room.this);
                         repaint();
                     }
                 }
+
                 if (e.getClickCount() == 2) {
-                    LightSource tempLigthSource=getAtLightSource(e.getX(),e.getY(),lightSources);
-                    new LightSourceConfigurationPopup(tempLigthSource);
+                    currentLightSource = getAtLightSource(e.getX(), e.getY(), lightSources);
+                    if (currentLightSource != null) {
+                        currentLightSource.getLightSourceConfigurationPopup().setVisible(true);
+                        currentLightSource = null;
+                    }else{
+                        currentSensor=getAtSensor(e.getX(),e.getY(),sensors);
+                        if (currentSensor != null) {
+                            currentSensor.getSensorConfigurationPopup().setVisible(true);
+                            currentSensor = null;
+                        }
+                    }
+                }
+
+                if(e.getClickCount()==1){
+                    for (int i = 0; i < sensors.size(); i++) sensors.get(i).countIlluminance(lightSources);
+                    System.out.println("*************************************");
                 }
             }
         });
 
         addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e) {
-                if(paintWall && currentWall!=null){
-                    currentWall=addWall(e);
+                if (paintWall && currentWall != null) {
+                    currentWall = addWall(e);
                     repaint();
                 }
 
@@ -124,7 +140,7 @@ public class Room extends JPanel {
                     repaint();
                 }
 
-                if (paintXYAxis && currentLightSource!=null) {
+                if (paintXYAxis && currentLightSource != null) {
                     currentLightSource.setAxisX(e.getX());
                     currentLightSource.setAxisY(e.getY());
                     repaint();
@@ -133,55 +149,86 @@ public class Room extends JPanel {
         });
     }
 
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d=(Graphics2D)g;
+        Graphics2D g2d = (Graphics2D) g;
 
         // net
         g2d.setColor(Color.lightGray);
-        for(int i=0;i<=950;i+=10) g2d.drawLine(i,0,i,820);
-        for(int i=0;i<=800;i+=10) g2d.drawLine(0,i,950,i);
+        for (int i = 0; i <= 950; i += 10) g2d.drawLine(i, 0, i, 820);
+        for (int i = 0; i <= 800; i += 10) g2d.drawLine(0, i, 950, i);
         g2d.setStroke(new BasicStroke(3));
-        for(int i=0;i<=950;i+=100) g2d.drawLine(i,0,i,820);
-        for(int i=0;i<=800;i+=100) g2d.drawLine(0,i,950,i);
+        for (int i = 0; i <= 950; i += 100) g2d.drawLine(i, 0, i, 820);
+        for (int i = 0; i <= 800; i += 100) g2d.drawLine(0, i, 950, i);
 
         // walls, sensors, lightsources
         paintWall(g2d);
-        for(int i=0;i<sensors.size();i++) sensors.get(i).draw(g2d);
-        for(int i=0;i<lightSources.size();i++) lightSources.get(i).draw(g2d);
+        for (int i = 0; i < sensors.size(); i++) sensors.get(i).draw(g2d);
+        for (int i = 0; i < lightSources.size(); i++) lightSources.get(i).draw(g2d);
 
-        if(paintWall && walls.size()>0 && currentWall!=null){
-            Wall wall0=walls.get(walls.size()-1);
+        if (paintWall && walls.size() > 0 && currentWall != null) {
+            Wall wall0 = walls.get(walls.size() - 1);
             g2d.draw(new Line2D.Float(wall0.getX(), wall0.getY(), currentWall.getX(), currentWall.getY()));
         }
 
         // axis
-        if(paintXYAxis) drawAxis(currentLightSource.getAxisX(),currentLightSource.getAxisY(),g2d);
+        if (paintXYAxis) drawAxis(currentLightSource.getAxisX(), currentLightSource.getAxisY(), g2d);
     }
 
-    private void drawAxis(int x, int y, Graphics2D g2d){
+    private void drawAxis(int x, int y, Graphics2D g2d) {
         g2d.setColor(Color.black);
         g2d.setStroke(new BasicStroke(1));
-        g2d.drawLine(currentLightSource.getX(),currentLightSource.getY(),x,y);
+        g2d.drawLine(currentLightSource.getX(), currentLightSource.getY(), x, y);
+
+        // optic axis and line perpendicular to optic axis and containing point (x,y)
+        double a1, a2, b2;
+        if (currentLightSource.getX() == x) {
+            a2 = 1;
+            b2 = -x;
+        } else {
+            a1 = (double) (currentLightSource.getY() - y) / (double) (currentLightSource.getX() - x);
+            a2 = (-1) / a1;
+            b2 = y - a2 * x;
+        }
+
+        // equation of circle with radius eqaul to r=tan(alfa/2)*distance between (x,y) and (currentLightSource.x,currentLightSOurcec.y)
+        double height = Math.sqrt(Math.pow((currentLightSource.getX() - x), 2) + Math.pow((currentLightSource.getY() - y), 2));
+        double radius = Math.tan(Math.toRadians(currentLightSource.getAngle() / 2)) * height;
+
+        double a, b, c;
+        double delta;
+        a = 1 + Math.pow(a2, 2);
+        b = (-2) * x + 2 * a2 * b2 - 2 * a2 * y;
+        c = Math.pow(x, 2) + Math.pow(b2, 2) - 2 * b2 * y + Math.pow(y, 2) - Math.pow(radius, 2);
+        delta = Math.pow(b, 2) - 4 * a * c;
+
+        double x1, x2, y1, y2;
+        x1 = ((-1) * b - Math.sqrt(delta)) / (2 * a);
+        x2 = ((-1) * b + Math.sqrt(delta)) / (2 * a);
+        y1 = a2 * x1 + b2;
+        y2 = a2 * x2 + b2;
+
+        g2d.drawPolygon(new int[]{currentLightSource.getX(), (int) x1, (int) x2}, new int[]{currentLightSource.getY(), (int) y1, (int) y2}, 3);
     }
 
     Wall addWall(MouseEvent e) {
-        Wall wall=new Wall();
-        wall.setX((e.getX()/10)*10+5); // center of clicked square
-        wall.setY((e.getY()/10)*10+5);
+        Wall wall = new Wall();
+        wall.setX((e.getX() / 10) * 10 + 5); // center of clicked square
+        wall.setY((e.getY() / 10) * 10 + 5);
         return wall;
     }
 
-    private void paintWall(Graphics2D g2d){
+    private void paintWall(Graphics2D g2d) {
         g2d.setColor(Color.black);
         g2d.setStroke(new BasicStroke(11));
-        if(walls.size()>1) {
-            for(int i = 0; i< walls.size()-1; i++) {
-                Wall wall1=walls.get(i);
-                Wall wall2=walls.get(i+1);
-                Wall wall0=walls.get(0);
+        if (walls.size() > 1) {
+            for (int i = 0; i < walls.size() - 1; i++) {
+                Wall wall1 = walls.get(i);
+                Wall wall2 = walls.get(i + 1);
+                Wall wall0 = walls.get(0);
                 g2d.draw(new Line2D.Float(wall1.getX(), wall1.getY(), wall2.getX(), wall2.getY()));
-                if(roomIsPainted==true && i==walls.size()-2) g2d.draw(new Line2D.Float(wall2.getX(), wall2.getY(), wall0.getX(), wall0.getY()));
+                if (roomIsPainted == true && i == walls.size() - 2)
+                    g2d.draw(new Line2D.Float(wall2.getX(), wall2.getY(), wall0.getX(), wall0.getY()));
             }
         }
     }
