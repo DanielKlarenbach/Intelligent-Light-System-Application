@@ -1,24 +1,42 @@
 package IntelligentLightSystemApplication.Room;
 
-import java.awt.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 import java.util.ArrayList;
 
+@Setter
+@Getter
+@ToString
 public class LightSource{
-    //
+    // lightSource's coordinates in the room in pixels
     private int x;
     private int y;
     private int z;
+
+    // lightSource's icon properties
     private final int radius=5;
     private Color color=Color.yellow;
-
     private boolean placed=false;
 
-    // optic axis coordinates
+    // optic axis coordinates in pixels
     private int axisX;
     private int axisY;
     private int axisZ;
 
-    private double solidAngle;
+    // popups
+    private XZAxisPopup xyAxisPopup;
+    private LightSourceConfigurationPopup lightSourceConfigurationPopup;
+
+    // lightSource properties
+    private String name;
+    private double angle; // opening angle
+    private double luminousFlux;
+    private String type;
 
     public LightSource(int x, int y, int z){
         this.x=x;
@@ -39,76 +57,23 @@ public class LightSource{
     }
 
     static LightSource getAtLightSource(int x, int y, ArrayList<LightSource> lightSources) {
+        LightSource current;
         for (int i = 0; i < lightSources.size(); i++) {
-            if ((x - lightSources.get(i).getX()) * (x - lightSources.get(i).getX()) + (y - lightSources.get(i).getY()) * (y - lightSources.get(i).getY()) <= (lightSources.get(i).getRadius()+10) * (lightSources.get(i).getRadius()+10))
-                return lightSources.get(i);
+            current=lightSources.get(i);
+            if (Math.pow((x - current.getX()),2) + Math.pow((y - current.getY()),2) <= Math.pow((current.getRadius()+10),2)) return current;
         }
         return null;
     }
 
-    // setters and getters
-
-    public int getZ() {
-        return z;
+    // counts the distance in pixels(1px-1cm) between the center of the lightSource and the given point located on the opiticAxis
+    double countConeHeightWithGivenPoint(int[] point){
+        return Math.sqrt(Math.pow((getX()-point[0]),2)    +   Math.pow((getY()-point[1]),2)   +   Math.pow((getZ()-point[2]),2));
     }
 
-    public void setZ(int z) {
-        this.z = z;
-    }
-
-    public int getAxisZ() {
-        return axisZ;
-    }
-
-    public void setAxisZ(int axisZ) {
-        this.axisZ = axisZ;
-    }
-
-    public int getAxisX() {
-        return axisX;
-    }
-
-    public void setAxisX(int axisX) {
-        this.axisX = axisX;
-    }
-
-    public int getAxisY() {
-        return axisY;
-    }
-
-    public void setAxisY(int axisY) {
-        this.axisY = axisY;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getRadius() {
-        return radius;
-    }
-
-    public boolean isPlaced() {
-        return placed;
-    }
-
-    public void setPlaced(boolean placed) {
-        this.placed = placed;
+    // counts radius in pixels(1px-1cm) of the cone for given height
+    double countConeRadiusWithGivenPoint(int[] point){
+        double radians=Math.toRadians(angle/2);
+        double currentHeight=countConeHeightWithGivenPoint(point);
+        return Math.tan(radians)*currentHeight;
     }
 }

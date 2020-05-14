@@ -2,7 +2,6 @@ package IntelligentLightSystemApplication.Buttons;
 
 import IntelligentLightSystemApplication.Room.LightSource;
 import IntelligentLightSystemApplication.Room.Room;
-import IntelligentLightSystemApplication.Room.Sensor;
 
 import javax.swing.*;
 import java.awt.*;
