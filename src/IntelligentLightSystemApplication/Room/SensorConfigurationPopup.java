@@ -1,5 +1,6 @@
 package IntelligentLightSystemApplication.Room;
 
+import IntelligentLightSystemApplication.SensorList.SensorList;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -25,6 +26,7 @@ public class SensorConfigurationPopup extends JDialog {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 sensor.setName(name.getText());
+                SensorList.addItem(name.getText());
             }
         });
         pack();

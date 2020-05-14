@@ -120,5 +120,7 @@ public class Sensor{
         x= (point[2]*C-lineStart[0]*A+A*point[0]-lineStart[1]*B+point[1]*B-lineStart[2]*C)/(Math.pow(A,2)+Math.pow(B,2)+Math.pow(C,2));
         return new int[]{(lineStart[0]+(int)(A*x)),(lineStart[1]+(int)(B*x)),(lineStart[2]+(int)(C*x))};
     }
+
+
 }
 

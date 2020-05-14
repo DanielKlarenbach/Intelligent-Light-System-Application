@@ -1,5 +1,6 @@
 package IntelligentLightSystemApplication.Room;
 
+import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -37,7 +38,7 @@ public class Room extends JPanel {
     private ArrayList<Wall> walls=new ArrayList<>();
     private ArrayList<Sensor> sensors=new ArrayList<>();
     private ArrayList<LightSource> lightSources=new ArrayList<>();
-    private  ArrayList<Window> windows =new ArrayList<>();
+    private ArrayList<Window> windows =new ArrayList<>();
 
     // currents
     private LightSource currentLightSource;
@@ -303,5 +304,5 @@ public class Room extends JPanel {
             }
         }
     }
-}
 
+}

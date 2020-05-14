@@ -1,6 +1,7 @@
 package IntelligentLightSystemApplication;
 
 import IntelligentLightSystemApplication.Buttons.Buttons;
+import IntelligentLightSystemApplication.Room.LightSource;
 import IntelligentLightSystemApplication.Room.Room;
 import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
 import IntelligentLightSystemApplication.Menu.MainMenu;
@@ -10,6 +11,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainFrame extends JFrame {
     MainFrame(){
