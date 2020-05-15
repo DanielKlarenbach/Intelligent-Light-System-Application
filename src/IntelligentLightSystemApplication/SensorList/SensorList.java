@@ -16,16 +16,17 @@ public class SensorList extends JList {
         setPreferredSize(new Dimension(500, 400));
     }
 
-    public static void addItem(Object Item) {
-        data.addElement(Item);
+    public static void addItem(String Item) {
+        if (Item.contains("null")) {data.addElement("Add Name"); }
+        else {data.addElement(Item); }
     }
 
-//    public static void addAllItems() {
-//        ArrayList<Sensor> sensors = Room.getSensors();
-//        for (int i=0; i<sensors.size(); i++) {
-//            if (sensors.get(i).getName() == null) {addItem("Sensor " + i); }
-//            else {addItem(sensors.get(i).getName()); }
-//        }
-//
-//    }
+    public static void updateAllItems() {
+        ArrayList<Sensor> sensors = Room.getSensors();
+        for (int i=0; i<sensors.size(); i++) {
+            Sensor sensor = sensors.get(i);
+            if (sensor.getName() == null) {data.set(i, "Sensor " + i); }
+            else {data.set(i, sensor.getName() + ": " + sensor.getIlluminance()); }
+        }
+    }
 }
