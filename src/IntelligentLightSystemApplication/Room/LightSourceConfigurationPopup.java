@@ -30,7 +30,7 @@ public class LightSourceConfigurationPopup extends JDialog {
                 lightSource.setAngle(Double.parseDouble(angle.getText()));
                 lightSource.setLuminousFlux(Double.parseDouble(luminousFlux.getText()));
                 lightSource.setType(type.getText());
-                LightSourceList.addItem(name.getText());
+                LightSourceList.addItem(name.getText() + ": " + luminousFlux.getText());
             }
         });
         pack();

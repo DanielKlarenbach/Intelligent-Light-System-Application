@@ -26,7 +26,7 @@ public class SensorConfigurationPopup extends JDialog {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 sensor.setName(name.getText());
-                SensorList.addItem(name.getText());
+                SensorList.addItem(name.getText() + ": " + illuminance.getText());
             }
         });
         pack();
