@@ -1,6 +1,5 @@
 package IntelligentLightSystemApplication.SensorList;
 
-import IntelligentLightSystemApplication.Room.LightSource;
 import IntelligentLightSystemApplication.Room.Room;
 import IntelligentLightSystemApplication.Room.Sensor;
 
@@ -30,3 +29,4 @@ public class SensorList extends JList {
         }
     }
 }
+

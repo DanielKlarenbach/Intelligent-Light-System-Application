@@ -1,6 +1,6 @@
 package IntelligentLightSystemApplication.Room;
 
-import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
+import IntelligentLightSystemApplication.LightSourceList.LightSourceList;
 
 import javax.swing.*;
 import java.awt.*;
