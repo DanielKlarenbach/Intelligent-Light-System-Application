@@ -1,9 +1,11 @@
 package IntelligentLightSystemApplication;
 
 import IntelligentLightSystemApplication.Buttons.Buttons;
+import IntelligentLightSystemApplication.ModeMenu.ModeMenu;
 import IntelligentLightSystemApplication.Room.Room;
 import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
 import IntelligentLightSystemApplication.Menu.MainMenu;
+import IntelligentLightSystemApplication.Room.Sun;
 import IntelligentLightSystemApplication.SensorList.SensorList;
 
 import javax.swing.*;
@@ -25,6 +27,19 @@ public class MainFrame extends JFrame {
         // menu
         MainMenu menu=new MainMenu();
         add(menu,BorderLayout.NORTH);
+
+        //mode menu
+        double latitude = 50;
+        ModeMenu mode =new ModeMenu();
+        add(mode,BorderLayout.SOUTH);
+       // System.out.println("main"+mode.getMode());  daje null, nie uwzględnia tego co się dzieje po zmianie
+        Sun sun = new Sun();
+        sun.setAngle(mode.getTime(), mode.getDay(), latitude);
+        double val = sun.getAngle();
+
+        //CZEMUUUUUUU NIE POBIERA DANYCH Z MODEMENU?
+
+
 
         // application panel
         JPanel applicationPanel=new JPanel();

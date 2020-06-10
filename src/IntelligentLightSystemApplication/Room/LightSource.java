@@ -8,7 +8,7 @@ public class LightSource{
     private int x;
     private int y;
     private int z;
-    private final int radius=5;
+    private final int radius=10;
     private Color color=Color.yellow;
 
     private boolean placed=false;

@@ -8,7 +8,7 @@ public class Sensor{
     private int x;
     private int y;
     private int z;
-    private final int radius=5;
+    private final int radius=10;
 
     private boolean placed=false;
 
