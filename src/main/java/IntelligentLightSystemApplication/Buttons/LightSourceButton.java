@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 
 class LightSourceButton extends JButton{
     LightSourceButton(Room room){
-        super(new ImageIcon("src/resources/LightSourceButton.png"));
+        super(new ImageIcon(LightSourceButton.class.getResource("/LightSourceButton.png")));
         setPreferredSize(new Dimension(50,50));
         setBackground(Color.WHITE);
         addMouseListener( new MouseAdapter(){

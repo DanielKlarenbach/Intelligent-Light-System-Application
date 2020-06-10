@@ -1,6 +1,5 @@
 package IntelligentLightSystemApplication.Room;
 
-import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

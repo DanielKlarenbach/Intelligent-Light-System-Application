@@ -1,11 +1,7 @@
-package IntelligentLightSystemApplication.LightSourceLIst;
-
-import IntelligentLightSystemApplication.Room.LightSource;
-import IntelligentLightSystemApplication.Room.Room;
+package IntelligentLightSystemApplication.LightSourceList;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class LightSourceList extends JList{
     static DefaultListModel data = new DefaultListModel();
