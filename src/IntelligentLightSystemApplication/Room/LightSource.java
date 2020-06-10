@@ -76,4 +76,6 @@ public class LightSource{
         double currentHeight=countConeHeightWithGivenPoint(point);
         return Math.tan(radians)*currentHeight;
     }
+
+
 }

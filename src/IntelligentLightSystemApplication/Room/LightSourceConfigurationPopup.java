@@ -1,5 +1,7 @@
 package IntelligentLightSystemApplication.Room;
 
+import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -28,6 +30,7 @@ public class LightSourceConfigurationPopup extends JDialog {
                 lightSource.setAngle(Double.parseDouble(angle.getText()));
                 lightSource.setLuminousFlux(Double.parseDouble(luminousFlux.getText()));
                 lightSource.setType(type.getText());
+                LightSourceList.updateAllItems();
             }
         });
         pack();

@@ -1,5 +1,7 @@
 package IntelligentLightSystemApplication.Room;
 
+import IntelligentLightSystemApplication.LightSourceLIst.LightSourceList;
+import IntelligentLightSystemApplication.SensorList.SensorList;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,9 +37,9 @@ public class Room extends JPanel {
 
     // objects in the room
     private ArrayList<Wall> walls=new ArrayList<>();
-    private ArrayList<Sensor> sensors=new ArrayList<>();
-    private ArrayList<LightSource> lightSources=new ArrayList<>();
-    private  ArrayList<Window> windows =new ArrayList<>();
+    private static ArrayList<Sensor> sensors=new ArrayList<>(); //!!!!
+    private static ArrayList<LightSource> lightSources=new ArrayList<>(); //!!!!!!!!!!!!!!!!
+    private ArrayList<Window> windows =new ArrayList<>();
 
     // currents
     private LightSource currentLightSource;
@@ -87,6 +89,7 @@ public class Room extends JPanel {
                     paintSensor = false;
                     sensors.get(sensors.size() - 1).countIlluminance(lightSources);
                     repaint();
+                    SensorList.addItem(sensors.get(sensors.size() - 1).getName() + ": " + sensors.get(sensors.size() - 1).getIlluminance());
                 }
 
                 if (paintLightSource) {
@@ -94,6 +97,7 @@ public class Room extends JPanel {
                     lightSources.get(lightSources.size() - 1).setLightSourceConfigurationPopup(new LightSourceConfigurationPopup(lightSources.get(lightSources.size() - 1)));
                     paintLightSource = false;
                     repaint();
+                    LightSourceList.addItem(lightSources.get(lightSources.size() - 1).getName() + ": " + lightSources.get(lightSources.size() - 1).getLuminousFlux());
                 }
 
                 if (paintXYAxis) {
@@ -108,6 +112,7 @@ public class Room extends JPanel {
                         paintXYAxis = false;
                         currentLightSource = null;
                     }
+
                     repaint();
                 }
 
@@ -117,6 +122,8 @@ public class Room extends JPanel {
                         currentLightSource.setColor(Color.RED);
                         XZAxisPopup popup = new XZAxisPopup(Room.this);
                         repaint();
+                        LightSourceList.updateAllItems();
+                        SensorList.updateAllItems();
                     }
                 }
 
@@ -191,6 +198,7 @@ public class Room extends JPanel {
         paintWall(g2d);
         for (int i = 0; i < sensors.size(); i++) sensors.get(i).draw(g2d);
         for (int i = 0; i < lightSources.size(); i++) lightSources.get(i).draw(g2d);
+//      tu nie
 
         if (paintWall && walls.size() > 0 && currentWall != null) {
             Wall wall0 = walls.get(walls.size() - 1);
@@ -207,6 +215,7 @@ public class Room extends JPanel {
 
         // axis
         if (paintXYAxis) drawAxis(currentLightSource.getAxisX(), currentLightSource.getAxisY(), g2d);
+//        tu nie
     }
 
     private void drawAxis(int x, int y, Graphics2D g2d) {
@@ -225,7 +234,7 @@ public class Room extends JPanel {
             b2 = y - a2 * x;
         }
 
-        // equation of circle with radius eqaul to r=tan(alfa/2)*distance between (x,y) and (currentLightSource.x,currentLightSOurcec.y)
+        // equation of circle with radius equal to r=tan(alfa/2)*distance between (x,y) and (currentLightSource.x,currentLightSOurcec.y)
         double height = Math.sqrt(Math.pow((currentLightSource.getX() - x), 2) + Math.pow((currentLightSource.getY() - y), 2));
         double radius = Math.tan(Math.toRadians(currentLightSource.getAngle() / 2)) * height;
 
@@ -243,6 +252,7 @@ public class Room extends JPanel {
         y2 = a2 * x2 + b2;
 
         g2d.drawPolygon(new int[]{currentLightSource.getX(), (int) x1, (int) x2}, new int[]{currentLightSource.getY(), (int) y1, (int) y2}, 3);
+//        tu nie
     }
 
     Wall addWall(MouseEvent e) {
@@ -303,5 +313,13 @@ public class Room extends JPanel {
             }
         }
     }
-}
 
+    public static ArrayList<Sensor> getSensors() {
+        return sensors;
+    }
+
+    public static ArrayList<LightSource> getLightSources() {
+        return lightSources;
+    }
+
+}
