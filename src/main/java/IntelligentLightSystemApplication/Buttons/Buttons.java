@@ -10,6 +10,9 @@ public class Buttons extends JPanel {
         setLayout(new FlowLayout(0,0,0));
         setPreferredSize(new Dimension(50,800));
 
+        ModeButton modeButton = new ModeButton(room);
+        add(modeButton);
+
         SensorButton sensorButton=new SensorButton(room);
         add(sensorButton);
 

@@ -9,6 +9,8 @@ import lombok.ToString;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Line2D;
@@ -23,6 +25,8 @@ import static IntelligentLightSystemApplication.Room.Sensor.getAtSensor;
 public class Room extends JPanel {
     // room's properties
     private int roomHeight = 1000; // in pixels(1px-1cm)
+    private double angle;
+    private int illuminance;
 
     // action listeners
     private boolean paintWall = false;
@@ -33,6 +37,7 @@ public class Room extends JPanel {
     private boolean paintXZAxis = false;
     private boolean delete = false;
     private boolean roomIsPainted = false;
+    private boolean mode=false;
     private boolean paintWindow=false;
     private boolean windowEnd=false;
 
@@ -101,6 +106,42 @@ public class Room extends JPanel {
                     LightSourceList.addItem(lightSources.get(lightSources.size() - 1).getName() + ": " + lightSources.get(lightSources.size() - 1).getLuminousFlux());
                 }
 
+                if(mode){
+                    // OutsideConfigurationPopup outsidePopup = new OutsideConfigurationPopup();
+                    mode = false;
+                    Sun sun = new Sun();
+                    JFrame frame=new JFrame();
+                    JButton button;
+                    frame.setSize(300, 300);
+                    frame.setVisible(true);
+                    frame.setLayout(new GridLayout(4, 2));
+                    JTextField  illumination=new JTextField();
+                    frame.add(new JLabel("Lux outside: "));
+                    frame.add(illumination);
+                    frame.add(new JLabel("Day of year: "));
+                    JTextField day = new JTextField();
+                    frame.add(day);
+                    frame.add(new JLabel("Time of day: "));
+                    JTextField time=new JTextField();
+                    frame.add(time);
+                    button = new JButton("Apply");
+                    frame.add(button);
+                    button.addActionListener(new ActionListener(){
+                        public void actionPerformed(ActionEvent e) {
+
+                            sun.setDay(Integer.parseInt(day.getText()));
+                            sun.setTime(Integer.parseInt(time.getText()));
+                            sun.setIllumination(Integer.parseInt(illumination.getText()));
+                            sun.setAngle(50);
+                            setAngle(sun.getAngle());
+                            setIlluminance(sun.getIllumination());
+
+                        }
+
+                    });
+                    repaint();
+                }
+
                 if (paintXYAxis) {
                     if (currentLightSource == null) {
                         currentLightSource = getAtLightSource(e.getX(), e.getY(), lightSources);
@@ -145,6 +186,29 @@ public class Room extends JPanel {
                 if(e.getClickCount()==1){
                     for (int i = 0; i < sensors.size(); i++) sensors.get(i).countIlluminance(lightSources);
                     System.out.println("*************************************");
+                }
+
+                for(int i=0; i<windows.size()-1; i++){  //zacina się dla niektórych okien co jakiś czas, spr czy wina komputera
+                    if(e.getX()<=windows.get(i).getX2() && e.getX()>=windows.get(i).getX1()
+                            && e.getY()<=windows.get(i).getY2() && e.getY()>=windows.get(i).getY1()){
+                        JPopupMenu pop =  showWindowMenu(i);
+                        pop.show(e.getComponent(),e.getX(),e.getY());
+                    }
+                    else if(e.getX()>=windows.get(i).getX2() && e.getX()<=windows.get(i).getX1()
+                            && e.getY()>=windows.get(i).getY2() && e.getY()<=windows.get(i).getY1()){
+                        JPopupMenu pop =  showWindowMenu(i);
+                        pop.show(e.getComponent(),e.getX(),e.getY());
+                    }
+                    else if(e.getX()>=windows.get(i).getX1() && e.getX()<=windows.get(i).getX2()
+                            && e.getY()>=windows.get(i).getY2() && e.getY()<=windows.get(i).getY1()){
+                        JPopupMenu pop =  showWindowMenu(i);
+                        pop.show(e.getComponent(),e.getX(),e.getY());
+                    }
+                    else if(e.getX()<=windows.get(i).getX1() && e.getX()>=windows.get(i).getX2()
+                            && e.getY()<=windows.get(i).getY2() && e.getY()>=windows.get(i).getY1()){
+                        JPopupMenu pop =  showWindowMenu(i);
+                        pop.show(e.getComponent(),e.getX(),e.getY());
+                    }
                 }
             }
         });
@@ -197,6 +261,7 @@ public class Room extends JPanel {
 
         // walls, sensors, lightsources
         paintWall(g2d);
+        paintMap(g2d);
         for (int i = 0; i < sensors.size(); i++) sensors.get(i).draw(g2d);
         for (int i = 0; i < lightSources.size(); i++) lightSources.get(i).draw(g2d);
 //      tu nie
@@ -290,7 +355,7 @@ public class Room extends JPanel {
 
 
     private void paintWindow(Graphics2D g2d){
-        g2d.setColor(Color.cyan);
+        g2d.setColor(Color.gray);
         g2d.setStroke(new BasicStroke(11));
         if(windows.size()>1) {
             for (int i = 0; i < windows.size() - 1; i++) {
@@ -313,14 +378,185 @@ public class Room extends JPanel {
                     g2d.draw(new Line2D.Float(wall2.getX(), wall2.getY(), wall0.getX(), wall0.getY()));
             }
         }
+        if(roomIsPainted) findEdges();
     }
+    boolean in = false;
+    int minX;
+    int maxX;
+    int minY;
+    int maxY;
+    private void findEdges(){
+        minX = walls.get(0).getX();
+        maxX = walls.get(0).getX();
+        minY = walls.get(0).getY();
+        maxY = walls.get(0).getY();
+        for(int i =0; i<walls.size()-1; i++){
+            if(walls.get(i).getX()>maxX) maxX=walls.get(i).getX();
+            else if(walls.get(i).getX()<minX) minX=walls.get(i).getX();
+            if(walls.get(i).getY()>maxY) maxY=walls.get(i).getY();
+            else if(walls.get(i).getY()<minY) minY=walls.get(i).getY();
+        }
+    }
+    private void paintMap(Graphics2D g2d){     //heatmap
+        double intensity;
 
+        double a = getAngle();
+        g2d.setColor(Color.lightGray);
+        g2d.fillRect(minX+5,minY+5,maxX-minX-10,maxY-minY-10);
+        for(int i = minX;i<=maxX-10;i+=1){
+            for(int j = minY; j<=maxY-10;j+=1){
+                intensity = 0;
+                for(int k=0; k<=windows.size()-1; k+=2){
+                    g2d.setColor(Color.darkGray);
+                    if(windows.get(k).getX1()==windows.get(k).getX2() && windows.get(k).getX1()==minX) {
+                        //  g2d.fillRect(windows.get(k).getX1() + 5, minY + 5, (int) (100 * windows.get(k).getShadow()), maxY - minY - 10);
+                        if (i > (int) (windows.get(k).getShadow(a) * 100) + windows.get(k).getX1()) { //jeśli nie jest w cieniu ściany od oknem
+                            if(j==maxY-10) continue;
+                            intensity+=getPointIlluminance(i,j,getIlluminance(),windows.get(k));
+                            if(intensity<50){
+                                g2d.setColor(Color.blue);
+                            }
+                            else if(intensity>=50 && intensity<100){
+                                g2d.setColor(Color.GREEN);
+                            }
+                            else if(intensity>=100 && intensity<200){
+                                g2d.setColor(Color.yellow);
+                            }
+                            else if(intensity>=200 && intensity<300){
+                                g2d.setColor(Color.orange);
+                            }
+                            else if(intensity>=300 && intensity<400){
+                                g2d.setColor(Color.PINK);
+                            }
+                            else if(intensity>=400){
+                                g2d.setColor(Color.red);
+                            }
+
+                            g2d.fillRect(i+5 , j+5 , 1, 1);
+                        }
+                    }
+                    //swiatło od północy z jakiegoś powodu rysuje się tylko w cieniu pod innymi oknami,
+                    // dlatego trzeba najpierw rysować pólnocne okna, a potem resztę
+                    else if(windows.get(k).getY1()==windows.get(k).getY2() && windows.get(k).getY1()==minY) {
+                        // g2d.fillRect(minX+5, minY + 5,maxX - minX - 10, (int) (100 * windows.get(k).getShadow()));
+                        if (j > (int) (windows.get(k).getShadow(a) * 100) + windows.get(k).getY1()) { //jesli jest poniżej cienia
+                            if(i==maxX-10) continue;
+                            intensity+=getPointIlluminance(i,j,getIlluminance(),windows.get(k));
+                            if(intensity<50){
+                                g2d.setColor(Color.blue);
+                            }
+                            else if(intensity>=50 && intensity<100){
+                                g2d.setColor(Color.GREEN);
+                            }
+                            else if(intensity>=100 && intensity<200){
+                                g2d.setColor(Color.yellow);
+                            }
+                            else if(intensity>=200 && intensity<300){
+                                g2d.setColor(Color.orange);
+                            }
+                            else if(intensity>=300 && intensity<400){
+                                g2d.setColor(Color.PINK);
+                            }
+                            else if(intensity>=400){
+                                g2d.setColor(Color.red);
+                            }
+                            g2d.fillRect(i + 5, j + 5, 1, 1);
+                        }
+                    }
+                    else if(windows.get(k).getX1()==windows.get(k).getX2() && windows.get(k).getX1()==maxX) {
+                        //   g2d.fillRect(windows.get(k).getX1()-(int)(100*windows.get(k).getShadow())-5, minY + 5,(int) (100 * windows.get(k).getShadow()), maxY - minY - 10 );
+                        if (i <windows.get(k).getX1() - (int) (windows.get(k).getShadow(a) * 100)) {
+                            if(i==minX || j==maxY-10) continue;
+                            intensity+=getPointIlluminance(i,j,getIlluminance(),windows.get(k));
+                            if(intensity<50){
+                                g2d.setColor(Color.blue);
+                            }
+                            else if(intensity>=50 && intensity<100){
+                                g2d.setColor(Color.GREEN);
+                            }
+                            else if(intensity>=100 && intensity<200){
+                                g2d.setColor(Color.yellow);
+                            }
+                            else if(intensity>=200 && intensity<300){
+                                g2d.setColor(Color.orange);
+                            }
+                            else if(intensity>=300 && intensity<400){
+                                g2d.setColor(Color.PINK);
+                            }
+                            else if(intensity>=400){
+                                g2d.setColor(Color.red);
+                            }
+                            g2d.fillRect(i + 5, j + 5, 1, 1);
+                        }
+
+                    }
+                    else if(windows.get(k).getY1()==windows.get(k).getY2() && windows.get(k).getY1()==maxY) {
+                        //  g2d.fillRect(minX+5,maxY-(int)(100*windows.get(k).getShadow()), maxX-minX-10, (int)(100*windows.get(k).getShadow())-5);
+                        if (j <windows.get(k).getY2() - (int) (windows.get(k).getShadow(a) * 100)) {
+                            if(i==minX || j==maxY ) continue;
+                            intensity+=getPointIlluminance(i,j,getIlluminance(),windows.get(k));
+                            if(intensity<50){
+                                g2d.setColor(Color.blue);
+                            }
+                            else if(intensity>=50 && intensity<100){
+                                g2d.setColor(Color.GREEN);
+                            }
+                            else if(intensity>=100 && intensity<200){
+                                g2d.setColor(Color.yellow);
+                            }
+                            else if(intensity>=200 && intensity<300){
+                                g2d.setColor(Color.orange);
+                            }
+                            else if(intensity>=300 && intensity<400){
+                                g2d.setColor(Color.PINK);
+                            }
+                            else if(intensity>=400){
+                                g2d.setColor(Color.red);
+                            }
+                            g2d.fillRect(i + 5, j + 5, 1, 1);
+                        }
+                    }
+
+                }
+            }
+
+        }
+    }
+    private JPopupMenu showWindowMenu(int i){
+        final JPopupMenu popupmenu = new JPopupMenu("Edit");
+        JComboBox choice = new JComboBox();
+        double a = getAngle();
+        choice.addItem("Shadow length: " + windows.get(i).getShadow(a));
+        choice.addItem("(X1,Y1): (" + windows.get(i).getX1() + "," + windows.get(i).getY1() +")");
+        choice.addItem("(X2,Y2): (" + windows.get(i).getX2() + "," + windows.get(i).getY2() +")");
+        choice.addItem("Width: " + Math.sqrt(Math.pow(Math.abs(windows.get(i).getX1()-windows.get(i).getX2()),2)+Math.pow(Math.abs(windows.get(i).getY1()-windows.get(i).getY2()),2))/100 + " m");
+        add(choice);
+        popupmenu.add(choice);
+        add(popupmenu);
+        setLayout(null);
+        setVisible(true);
+        return popupmenu;
+    }
+    public double getPointIlluminance(int x, int y, int outsideIlluminance, Window window){
+        double area = window.getHeight()*0.01*Math.sqrt(Math.pow(Math.abs(window.getX1()-window.getX2()),2)+Math.pow(Math.abs(window.getY1()-window.getY2()),2));
+        double stream = outsideIlluminance * area;
+        double luminosity = stream/(4*Math.PI);
+        double l = 0.01*Math.sqrt(Math.pow(x-(window.getX1()+window.getX2())/2,2)+Math.pow(y-(window.getY1()+window.getY2())/2,2));
+        double r = Math.sqrt(window.getHeight()*window.getHeight()+l*l);
+        double cosAngle = window.getHeight()/r;
+        double E = luminosity*cosAngle/(r*r);
+        return E;
+    }
     public static ArrayList<Sensor> getSensors() {
         return sensors;
     }
 
     public static ArrayList<LightSource> getLightSources() {
         return lightSources;
+    }
+
+    public void setAngle(double ang){
+        this.angle=Math.abs(ang);
     }
 
 }
