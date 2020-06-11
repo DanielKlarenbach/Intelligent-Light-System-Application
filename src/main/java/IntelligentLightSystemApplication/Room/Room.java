@@ -406,8 +406,29 @@ public class Room extends JPanel {
         for(int i = minX;i<=maxX-10;i+=1){
             for(int j = minY; j<=maxY-10;j+=1){
                 intensity = 0;
+                intensity+=countIlluminance(lightSources,i,j,0);
+                if(intensity<50){
+                    g2d.setColor(Color.blue);
+                }
+                else if(intensity>=50 && intensity<100){
+                    g2d.setColor(Color.GREEN);
+                }
+                else if(intensity>=100 && intensity<200){
+                    g2d.setColor(Color.yellow);
+                }
+                else if(intensity>=200 && intensity<300){
+                    g2d.setColor(Color.orange);
+                }
+                else if(intensity>=300 && intensity<400){
+                    g2d.setColor(Color.PINK);
+                }
+                else if(intensity>=400){
+                    g2d.setColor(Color.red);
+                }
+
+                g2d.fillRect(i+5 , j+5 , 1, 1);
                 for(int k=0; k<=windows.size()-1; k+=2){
-                    g2d.setColor(Color.darkGray);
+                   // g2d.setColor(Color.darkGray);
                     if(windows.get(k).getX1()==windows.get(k).getX2() && windows.get(k).getX1()==minX) {
                         //  g2d.fillRect(windows.get(k).getX1() + 5, minY + 5, (int) (100 * windows.get(k).getShadow()), maxY - minY - 10);
                         if (i > (int) (windows.get(k).getShadow(a) * 100) + windows.get(k).getX1()) { //jeśli nie jest w cieniu ściany od oknem
@@ -468,6 +489,7 @@ public class Room extends JPanel {
                         if (i <windows.get(k).getX1() - (int) (windows.get(k).getShadow(a) * 100)) {
                             if(i==minX || j==maxY-10) continue;
                             intensity+=getPointIlluminance(i,j,getIlluminance(),windows.get(k));
+
                             if(intensity<50){
                                 g2d.setColor(Color.blue);
                             }
@@ -495,6 +517,7 @@ public class Room extends JPanel {
                         if (j <windows.get(k).getY2() - (int) (windows.get(k).getShadow(a) * 100)) {
                             if(i==minX || j==maxY ) continue;
                             intensity+=getPointIlluminance(i,j,getIlluminance(),windows.get(k));
+
                             if(intensity<50){
                                 g2d.setColor(Color.blue);
                             }
@@ -517,7 +540,9 @@ public class Room extends JPanel {
                         }
                     }
 
+
                 }
+
             }
 
         }
@@ -558,5 +583,68 @@ public class Room extends JPanel {
     public void setAngle(double ang){
         this.angle=Math.abs(ang);
     }
+
+    boolean isInsideTheCone(LightSource lightSource,int x,int y,int z){
+        int[] point=new int[]{x,y,z};
+        int[] lineStart=new int[]{lightSource.getX(),lightSource.getY(),lightSource.getZ()};
+        int[] lineEnd=new int[]{lightSource.getAxisX(),lightSource.getAxisY(),lightSource.getAxisZ()};
+        double distance= distanceBetweenPointAndLine(point,lineStart,lineEnd);
+        int[] pointOnLine=crossPoint(point,lineStart,lineEnd);
+        double radius=lightSource.countConeRadiusWithGivenPoint(pointOnLine);
+        //System.out.println("d r; "+distance+" "+radius);
+        return (distance<=radius && distance>=0);
+    }
+
+    double countIlluminance(ArrayList<LightSource> lightSources,int x,int y,int z){
+        double tempIlluminance=0;
+        double r=0;
+        double I=0;
+        double cos=0;
+        for(int i=0;i<lightSources.size();i++){
+            LightSource temp=lightSources.get(i);
+            if(isInsideTheCone(temp,x,y,z)) {
+                // illumiance = (I/r^2)*cos(alfa)
+                r = (Math.sqrt(Math.pow((x - temp.getX()), 2) + Math.pow((y - temp.getY()), 2) + Math.pow((z - temp.getZ()), 2))) / 100; // /100 to convert to meters
+                I = (temp.getLuminousFlux() / (2 * Math.PI * (1 - Math.cos(temp.getAngle() / 2))));
+                cos = Math.abs((temp.getZ() - z)) / r;
+                tempIlluminance += (I / Math.pow(r, 2) * cos);
+            }
+        }
+        return tempIlluminance;
+    }
+
+    public static double distanceBetweenPointAndLine(int[] point, int[] lineStart, int[] lineEnd){
+        int[] vector1 = new int[3];
+        int[] vector2 = new int[3];
+        int[] TotalThing = new int[3];
+
+        vector1[0] = lineEnd[0]-lineStart[0];
+        vector1[1] = lineEnd[1]-lineStart[1];
+        vector1[2] = lineEnd[2]-lineStart[2];
+
+        vector2[0] = point[0]-lineStart[0];
+        vector2[1] = point[1]-lineStart[1];
+        vector2[2] = point[2]-lineStart[2];
+
+        TotalThing[0] = (vector1[1]*vector2[2] - vector1[2]*vector2[1]);
+        TotalThing[1] = (vector1[2]*vector2[0] - vector1[0]*vector2[2]);
+        TotalThing[2] = (vector1[0]*vector2[1] - vector1[1]*vector2[0]);
+
+        double distance = (double) ((Math.sqrt(Math.pow(TotalThing[0],2)+Math.pow(TotalThing[1],2)+Math.pow(TotalThing[2],2))) /
+                Math.sqrt(Math.pow(vector1[0],2)+Math.pow(vector1[1],2)+Math.pow(vector1[2],2)));
+        return distance;
+    }
+
+    // returns coordinates of a crosspoint between optic axis and the line perpendicular to the optic axis and containing given point (double[] point)
+    public int[] crossPoint(int[] point,int [] lineStart,int [] lineEnd){
+        int A,B,C;
+        double x;
+        A=lineEnd[0]-lineStart[0];
+        B=lineEnd[1]-lineStart[1];
+        C=lineEnd[2]-lineStart[2];
+        x= (point[2]*C-lineStart[0]*A+A*point[0]-lineStart[1]*B+point[1]*B-lineStart[2]*C)/(Math.pow(A,2)+Math.pow(B,2)+Math.pow(C,2));
+        return new int[]{(lineStart[0]+(int)(A*x)),(lineStart[1]+(int)(B*x)),(lineStart[2]+(int)(C*x))};
+    }
+
 
 }
