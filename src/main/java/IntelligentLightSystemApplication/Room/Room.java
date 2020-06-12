@@ -187,29 +187,6 @@ public class Room extends JPanel {
                     for (int i = 0; i < sensors.size(); i++) sensors.get(i).countIlluminance(lightSources);
                     System.out.println("*************************************");
                 }
-
-                for(int i=0; i<windows.size()-1; i++){  //zacina się dla niektórych okien co jakiś czas, spr czy wina komputera
-                    if(e.getX()<=windows.get(i).getX2() && e.getX()>=windows.get(i).getX1()
-                            && e.getY()<=windows.get(i).getY2() && e.getY()>=windows.get(i).getY1()){
-                        JPopupMenu pop =  showWindowMenu(i);
-                        pop.show(e.getComponent(),e.getX(),e.getY());
-                    }
-                    else if(e.getX()>=windows.get(i).getX2() && e.getX()<=windows.get(i).getX1()
-                            && e.getY()>=windows.get(i).getY2() && e.getY()<=windows.get(i).getY1()){
-                        JPopupMenu pop =  showWindowMenu(i);
-                        pop.show(e.getComponent(),e.getX(),e.getY());
-                    }
-                    else if(e.getX()>=windows.get(i).getX1() && e.getX()<=windows.get(i).getX2()
-                            && e.getY()>=windows.get(i).getY2() && e.getY()<=windows.get(i).getY1()){
-                        JPopupMenu pop =  showWindowMenu(i);
-                        pop.show(e.getComponent(),e.getX(),e.getY());
-                    }
-                    else if(e.getX()<=windows.get(i).getX1() && e.getX()>=windows.get(i).getX2()
-                            && e.getY()<=windows.get(i).getY2() && e.getY()>=windows.get(i).getY1()){
-                        JPopupMenu pop =  showWindowMenu(i);
-                        pop.show(e.getComponent(),e.getX(),e.getY());
-                    }
-                }
             }
         });
 

@@ -72,20 +72,15 @@ public class Sensor{
         for(int i=0;i<lightSources.size();i++){
             LightSource temp=lightSources.get(i);
             if(isInsideTheCone(temp)) {
-                System.out.println(getName() + " jest");
                 // illumiance = (I/r^2)*cos(alfa)
                 r = (Math.sqrt(Math.pow((getX() - temp.getX()), 2) + Math.pow((getY() - temp.getY()), 2) + Math.pow((getZ() - temp.getZ()), 2))) / 100; // /100 to convert to meters
                 I = (temp.getLuminousFlux() / (2 * Math.PI * (1 - Math.cos(temp.getAngle() / 2))));
                 cos = Math.abs((temp.getZ() - getZ())) / r;
                 tempIlluminance += (I / Math.pow(r, 2) * cos);
-                double temp1=(I / Math.pow(r, 2) * cos);
-                System.out.println("r I cos illuminance: " + r + " " + I + " " + cos + " " + temp1);
             }
         }
         setIlluminance(tempIlluminance);
         sensorConfigurationPopup.getIlluminance().setText(String.valueOf(illuminance));
-        System.out.println(illuminance);
-        System.out.println("===================");
     }
 
     public static double distanceBetweenPointAndLine(int[] point, int[] lineStart, int[] lineEnd){
